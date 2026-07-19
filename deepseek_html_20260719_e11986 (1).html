@@ -1,0 +1,950 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <title>ShineAwards 2027</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,300;14..32,400;14..32,500;14..32,600;14..32,700&family=Playfair+Display:ital,wght@0,600;0,700;0,800;1,600&display=swap" rel="stylesheet" />
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            min-height: 100vh;
+            background: #060a14;
+            font-family: 'Inter', sans-serif;
+            color: #d6e6ff;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 1.5rem 1rem;
+            overflow: hidden;
+            cursor: default;
+        }
+
+        #three-container {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 0;
+            pointer-events: none;
+        }
+
+        #three-container canvas {
+            display: block;
+            width: 100% !important;
+            height: 100% !important;
+        }
+
+        .glass-container {
+            max-width: 1080px;
+            width: 100%;
+            background: rgba(8, 18, 38, 0.18);
+            backdrop-filter: blur(28px) saturate(1.8);
+            -webkit-backdrop-filter: blur(28px) saturate(1.8);
+            border-radius: 64px;
+            padding: 2.8rem 2.8rem;
+            border: 1px solid rgba(130, 180, 255, 0.04);
+            box-shadow: 0 40px 140px rgba(0, 0, 0, 0.7),
+                        inset 0 1px 0 rgba(255, 255, 255, 0.02);
+            position: relative;
+            z-index: 1;
+            animation: fadeIn 1.6s cubic-bezier(0.23, 1, 0.32, 1);
+            pointer-events: none;
+        }
+
+        .glass-container * {
+            pointer-events: auto;
+        }
+
+        @keyframes fadeIn {
+            0% { opacity: 0; transform: scale(0.94) translateY(30px); }
+            100% { opacity: 1; transform: scale(1) translateY(0); }
+        }
+
+        .glass-container::before {
+            content: '';
+            position: absolute;
+            top: -30%;
+            left: -20%;
+            width: 80%;
+            height: 80%;
+            background: radial-gradient(ellipse, rgba(70, 150, 255, 0.03) 0%, transparent 70%);
+            pointer-events: none;
+            border-radius: 50%;
+            animation: glowPulse 8s ease-in-out infinite;
+        }
+
+        @keyframes glowPulse {
+            0%, 100% { opacity: 0.4; transform: scale(1); }
+            50% { opacity: 1; transform: scale(1.12); }
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 1.6rem;
+            position: relative;
+            z-index: 2;
+        }
+
+        .header__badge {
+            display: inline-block;
+            font-size: 0.55rem;
+            font-weight: 500;
+            letter-spacing: 0.28em;
+            text-transform: uppercase;
+            color: #8bb4f0;
+            background: rgba(30, 60, 120, 0.12);
+            backdrop-filter: blur(4px);
+            padding: 0.25rem 1.6rem;
+            border-radius: 60px;
+            border: 1px solid rgba(130, 180, 255, 0.04);
+            margin-bottom: 0.6rem;
+            animation: slideDown 0.8s ease-out 0.2s both;
+        }
+
+        @keyframes slideDown {
+            0% { opacity: 0; transform: translateY(-12px); }
+            100% { opacity: 1; transform: translateY(0); }
+        }
+
+        .header__title {
+            font-family: 'Playfair Display', serif;
+            font-weight: 800;
+            font-size: clamp(2.6rem, 9vw, 5.2rem);
+            letter-spacing: -0.02em;
+            background: linear-gradient(180deg, #f0f8ff 0%, #8bb4f0 45%, #4a7ec9 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            text-shadow: 0 8px 80px rgba(50, 120, 255, 0.06);
+            line-height: 1.05;
+            animation: fadeIn 1s ease-out 0.3s both;
+        }
+
+        .header__year {
+            font-family: 'Playfair Display', serif;
+            font-weight: 700;
+            font-size: clamp(1.1rem, 3vw, 2.2rem);
+            color: rgba(160, 200, 255, 0.15);
+            letter-spacing: 0.6em;
+            margin-top: -0.2rem;
+            animation: fadeIn 1s ease-out 0.5s both;
+        }
+
+        .header__sub {
+            display: inline-block;
+            margin-top: 0.3rem;
+            font-size: clamp(0.75rem, 1.4vw, 1rem);
+            font-weight: 400;
+            color: #b0cbea;
+            background: rgba(20, 50, 90, 0.10);
+            backdrop-filter: blur(4px);
+            padding: 0.1rem 1.8rem;
+            border-radius: 60px;
+            border: 1px solid rgba(130, 180, 255, 0.03);
+            letter-spacing: 0.14em;
+            animation: fadeIn 1s ease-out 0.6s both;
+        }
+
+        .glass-card {
+            background: rgba(14, 30, 55, 0.12);
+            backdrop-filter: blur(14px) saturate(1.4);
+            -webkit-backdrop-filter: blur(14px) saturate(1.4);
+            border: 1px solid rgba(130, 180, 255, 0.03);
+            border-radius: 40px;
+            padding: 1.5rem 1.8rem;
+            box-shadow: 0 8px 48px rgba(0, 10, 30, 0.15),
+                        inset 0 1px 0 rgba(255, 255, 255, 0.015);
+            transition: all 0.5s cubic-bezier(0.23, 1, 0.32, 1);
+            cursor: pointer;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .glass-card::before {
+            content: '';
+            position: absolute;
+            top: -60%;
+            left: -60%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle at 30% 20%, rgba(130, 180, 255, 0.015), transparent 60%);
+            pointer-events: none;
+            transition: opacity 0.6s;
+        }
+
+        .glass-card:hover {
+            border-color: rgba(130, 180, 255, 0.10);
+            background: rgba(22, 46, 78, 0.16);
+            transform: translateY(-4px) scale(1.008);
+            box-shadow: 0 20px 70px rgba(0, 20, 60, 0.25);
+        }
+
+        .glass-card:active {
+            transform: scale(0.97);
+            transition-duration: 0.08s;
+        }
+
+        .glass-card--highlight {
+            background: rgba(30, 65, 120, 0.10);
+            border-color: rgba(90, 160, 255, 0.04);
+        }
+
+        .news-section {
+            margin: 1.8rem 0;
+            position: relative;
+            z-index: 2;
+        }
+
+        .news-section__label {
+            display: flex;
+            align-items: center;
+            gap: 0.8rem;
+            font-size: 0.55rem;
+            font-weight: 500;
+            letter-spacing: 0.24em;
+            text-transform: uppercase;
+            color: #7aa3e0;
+            margin-bottom: 0.8rem;
+            animation: slideDown 0.8s ease-out 0.8s both;
+        }
+
+        .news-section__label::after {
+            content: '';
+            flex: 1;
+            height: 1px;
+            background: linear-gradient(90deg, rgba(130, 180, 255, 0.06), transparent);
+        }
+
+        .news-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1.2rem;
+        }
+
+        .news-card {
+            background: rgba(10, 22, 42, 0.15);
+            backdrop-filter: blur(8px);
+            -webkit-backdrop-filter: blur(8px);
+            border-radius: 28px;
+            padding: 1.2rem 1.5rem 1.5rem;
+            border: 1px solid rgba(130, 180, 255, 0.02);
+            transition: all 0.4s ease;
+            cursor: pointer;
+            animation: fadeIn 0.9s ease-out 0.6s both;
+        }
+
+        .news-card:nth-child(2) {
+            animation-delay: 0.8s;
+        }
+
+        .news-card:hover {
+            border-color: rgba(130, 180, 255, 0.08);
+            background: rgba(18, 38, 68, 0.16);
+            transform: translateY(-3px);
+        }
+
+        .news-card__date {
+            font-size: 0.45rem;
+            text-transform: uppercase;
+            letter-spacing: 0.2em;
+            color: #7a9bc9;
+            font-weight: 500;
+            margin-bottom: 0.2rem;
+        }
+
+        /* === ВСЕ ЗАГОЛОВКИ КАРТОЧЕК — Playfair Display === */
+        .news-card__title {
+            font-family: 'Playfair Display', serif;
+            font-weight: 700;
+            font-size: 1rem;
+            color: #d6e6ff;
+            margin-bottom: 0.2rem;
+        }
+
+        .news-card__desc {
+            font-size: 0.8rem;
+            color: #b0cbea;
+            line-height: 1.6;
+            font-weight: 300;
+        }
+
+        .news-card__tag {
+            display: inline-block;
+            margin-top: 0.5rem;
+            font-size: 0.4rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.14em;
+            background: rgba(45, 85, 150, 0.08);
+            color: #8bb4f0;
+            padding: 0.1rem 0.9rem;
+            border-radius: 40px;
+            border: 1px solid rgba(130, 180, 255, 0.02);
+            transition: all 0.3s;
+        }
+
+        .news-card:hover .news-card__tag {
+            background: rgba(45, 85, 150, 0.14);
+            border-color: rgba(130, 180, 255, 0.04);
+        }
+
+        .info-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1.5rem;
+            margin: 1.8rem 0;
+            position: relative;
+            z-index: 2;
+        }
+
+        .info-card__icon {
+            font-size: 1.6rem;
+            margin-bottom: 0.3rem;
+            display: block;
+            opacity: 0.5;
+            transition: transform 0.4s ease;
+        }
+
+        .glass-card:hover .info-card__icon {
+            transform: scale(1.12) rotate(-4deg);
+        }
+
+        /* === ВСЕ ЗАГОЛОВКИ В ИНФО-БЛОКЕ — Playfair Display === */
+        .info-card h3 {
+            font-family: 'Playfair Display', serif;
+            font-weight: 700;
+            font-size: 1rem;
+            color: #d6e6ff;
+            margin-bottom: 0.2rem;
+        }
+
+        .info-card p {
+            font-size: 0.8rem;
+            color: #b0cbea;
+            line-height: 1.7;
+            font-weight: 300;
+        }
+
+        /* === ЦИТАТА ТОЖЕ Playfair Display (уже был) === */
+        .quote {
+            margin: 1.8rem 0;
+            padding: 1.6rem 2.2rem;
+            background: rgba(10, 22, 42, 0.10);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            border-radius: 48px;
+            border: 1px solid rgba(130, 180, 255, 0.02);
+            text-align: center;
+            position: relative;
+            z-index: 2;
+            transition: all 0.5s ease;
+            cursor: default;
+        }
+
+        .quote:hover {
+            border-color: rgba(130, 180, 255, 0.05);
+            background: rgba(14, 30, 55, 0.10);
+        }
+
+        .quote blockquote {
+            font-family: 'Playfair Display', serif;
+            font-weight: 600;
+            font-style: italic;
+            font-size: 1rem;
+            color: #c8ddf5;
+            line-height: 1.7;
+        }
+
+        .quote blockquote::before {
+            content: "“";
+            font-size: 2rem;
+            color: #7aa3e0;
+            margin-right: 0.2rem;
+            opacity: 0.2;
+        }
+
+        .quote blockquote::after {
+            content: "”";
+            font-size: 2rem;
+            color: #7aa3e0;
+            margin-left: 0.2rem;
+            opacity: 0.2;
+        }
+
+        .quote__author {
+            margin-top: 0.4rem;
+            font-size: 0.6rem;
+            font-weight: 400;
+            letter-spacing: 0.12em;
+            color: #7a9bc9;
+        }
+
+        .divider {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 1.2rem;
+            margin: 1.8rem 0 1.2rem;
+            opacity: 0.12;
+            position: relative;
+            z-index: 2;
+        }
+
+        .divider__line {
+            height: 1px;
+            flex: 1;
+            background: linear-gradient(90deg, transparent, rgba(130, 180, 255, 0.10), transparent);
+        }
+
+        .divider__diamond {
+            color: #7aa3e0;
+            font-size: 0.4rem;
+            letter-spacing: 0.1em;
+            animation: pulseDiamond 2.5s ease-in-out infinite;
+        }
+
+        @keyframes pulseDiamond {
+            0%, 100% { opacity: 0.2; }
+            50% { opacity: 1; }
+        }
+
+        .footer {
+            margin-top: 1.2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 1rem;
+            padding-top: 1rem;
+            border-top: 1px solid rgba(130, 180, 255, 0.02);
+            font-size: 0.6rem;
+            color: #5a7fa8;
+            position: relative;
+            z-index: 2;
+        }
+
+        .footer__team {
+            font-weight: 500;
+            color: #8bb4f0;
+            letter-spacing: 0.04em;
+        }
+
+        .footer__team span {
+            color: #b0cbea;
+        }
+
+        .footer__year {
+            color: #4a6f96;
+        }
+
+        @media (max-width: 760px) {
+            .glass-container {
+                padding: 1.5rem 1.2rem;
+                border-radius: 40px;
+            }
+            .news-grid,
+            .info-grid {
+                grid-template-columns: 1fr;
+            }
+            .quote {
+                padding: 1.2rem 1rem;
+            }
+            .quote blockquote {
+                font-size: 0.9rem;
+            }
+        }
+
+        @media (max-width: 420px) {
+            .glass-container {
+                padding: 0.8rem 0.6rem;
+                border-radius: 28px;
+            }
+            .header__title {
+                font-size: 2.2rem;
+            }
+            .news-card {
+                padding: 0.8rem;
+            }
+            .news-card__title {
+                font-size: 0.9rem;
+            }
+            .info-card {
+                padding: 0.8rem;
+            }
+        }
+
+        .ripple-effect {
+            position: absolute;
+            border-radius: 50%;
+            background: rgba(130, 180, 255, 0.06);
+            border: 1px solid rgba(130, 180, 255, 0.02);
+            animation: rippleAnim 0.7s ease-out forwards;
+            pointer-events: none;
+        }
+
+        @keyframes rippleAnim {
+            0% { width: 0; height: 0; opacity: 0.5; }
+            100% { width: 400px; height: 400px; opacity: 0; }
+        }
+
+        @keyframes flashOut {
+            0% { opacity: 1; }
+            100% { opacity: 0; }
+        }
+    </style>
+</head>
+<body>
+
+    <div id="three-container"></div>
+
+    <div class="glass-container" id="app">
+
+        <header class="header">
+            <div class="header__badge">✦ IronMine</div>
+            <h1 class="header__title">ShineAwards</h1>
+            <div class="header__year">2027</div>
+            <div class="header__sub">красивое окончание</div>
+        </header>
+
+        <section class="news-section">
+            <div class="news-section__label">📰 новости</div>
+            <div class="news-grid">
+                <div class="news-card" onclick="handleCardClick(this)">
+                    <div class="news-card__date">скоро</div>
+                    <div class="news-card__title">Два дня, 28 номинаций</div>
+                    <div class="news-card__desc">Мы подготовили два насыщенных дня. Вас ждут знакомые номинации и несколько сюрпризов.</div>
+                    <span class="news-card__tag">подробности позже</span>
+                </div>
+                <div class="news-card" onclick="handleCardClick(this)">
+                    <div class="news-card__date">скоро</div>
+                    <div class="news-card__title">Аукцион и игры</div>
+                    <div class="news-card__desc">В этом году мы добавили аукцион, мини-игры и лотерею — призы получат не только победители.</div>
+                    <span class="news-card__tag">будет интересно</span>
+                </div>
+            </div>
+        </section>
+
+        <div class="info-grid">
+            <div class="glass-card" onclick="handleCardClick(this)">
+                <span class="info-card__icon">🏆</span>
+                <h3>Что такое ShineAwards?</h3>
+                <p>Это главное событие года на IronMine. Мы отмечаем игроков, которые делают сервер ярче — своим трудом, талантом, дружелюбием или просто присутствием.</p>
+            </div>
+            <div class="glass-card glass-card--highlight" onclick="handleCardClick(this)">
+                <span class="info-card__icon">✨</span>
+                <h3>Как это работает?</h3>
+                <p>Голосование анонимное, честное и открытое для всех. Мы объявим все детали, даты и список номинаций в ближайшее время. Следите за новостями!</p>
+            </div>
+        </div>
+
+        <div class="quote">
+            <blockquote>
+                Мы создаём праздник, чтобы каждый мог почувствовать себя частью чего-то большого. Это не просто премия — это наша общая история.
+            </blockquote>
+            <div class="quote__author">— ShineTeam & IwwiTeam</div>
+        </div>
+
+        <div class="divider">
+            <span class="divider__line"></span>
+            <span class="divider__diamond">◆</span>
+            <span class="divider__line"></span>
+        </div>
+
+        <footer class="footer">
+            <span class="footer__team">⚡ <span>IwwiTeam</span> · ShineTeam</span>
+            <span class="footer__year">IronMine · 2027</span>
+        </footer>
+    </div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js">
+    </script>
+    <script>
+        (function() {
+            const container = document.getElementById('three-container');
+            const width = window.innerWidth;
+            const height = window.innerHeight;
+
+            const scene = new THREE.Scene();
+
+            const camera = new THREE.PerspectiveCamera(35, width / height, 0.1, 1000);
+            camera.position.set(0, 0.4, 5.5);
+            camera.lookAt(0, 0, 0);
+
+            const renderer = new THREE.WebGLRenderer({
+                antialias: true,
+                alpha: true
+            });
+            renderer.setSize(width, height);
+            renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+            renderer.toneMapping = THREE.ACESFilmicToneMapping;
+            renderer.toneMappingExposure = 1.4;
+            renderer.shadowMap.enabled = false;
+            container.appendChild(renderer.domElement);
+
+            // ===== СВЕТ =====
+            const ambient = new THREE.AmbientLight(0x4466aa, 0.3);
+            scene.add(ambient);
+
+            const main = new THREE.DirectionalLight(0xaaccff, 1.4);
+            main.position.set(2, 4, 5);
+            scene.add(main);
+
+            const fill = new THREE.DirectionalLight(0x4488cc, 0.6);
+            fill.position.set(-3, 1, -4);
+            scene.add(fill);
+
+            const rim = new THREE.DirectionalLight(0x88ccff, 0.9);
+            rim.position.set(-1, 0.5, -4);
+            scene.add(rim);
+
+            const bottom = new THREE.DirectionalLight(0x2266aa, 0.3);
+            bottom.position.set(0, -2, 0);
+            scene.add(bottom);
+
+            // ===== ГРУППА =====
+            const group = new THREE.Group();
+            scene.add(group);
+
+            // ===== МАТЕРИАЛЫ =====
+            const glassMat = new THREE.MeshPhysicalMaterial({
+                color: 0x88bbff,
+                metalness: 0.0,
+                roughness: 0.04,
+                transparent: true,
+                opacity: 0.20,
+                clearcoat: 0.8,
+                clearcoatRoughness: 0.15,
+                envMapIntensity: 1.2,
+                premultipliedAlpha: true,
+                side: THREE.DoubleSide,
+            });
+
+            const glassHighlightMat = new THREE.MeshPhysicalMaterial({
+                color: 0xffffff,
+                metalness: 0.0,
+                roughness: 0.0,
+                transparent: true,
+                opacity: 0.06,
+                side: THREE.DoubleSide,
+            });
+
+            const glowMat = new THREE.MeshBasicMaterial({
+                color: 0x4488ff,
+                transparent: true,
+                opacity: 0.03,
+                side: THREE.DoubleSide,
+            });
+
+            const goldMat = new THREE.MeshPhysicalMaterial({
+                color: 0x88ccff,
+                metalness: 0.4,
+                roughness: 0.08,
+                transparent: true,
+                opacity: 0.12,
+                emissive: 0x4488ff,
+                emissiveIntensity: 0.06,
+            });
+
+            // ===== ЧАША =====
+            const bowlGeo = new THREE.LatheGeometry([
+                new THREE.Vector2(0.42, 0.0),
+                new THREE.Vector2(0.52, 0.05),
+                new THREE.Vector2(0.62, 0.14),
+                new THREE.Vector2(0.70, 0.28),
+                new THREE.Vector2(0.74, 0.44),
+                new THREE.Vector2(0.72, 0.56),
+                new THREE.Vector2(0.64, 0.62),
+                new THREE.Vector2(0.48, 0.64),
+                new THREE.Vector2(0.38, 0.60),
+            ], 48);
+            const bowl = new THREE.Mesh(bowlGeo, glassMat);
+            bowl.position.y = 0.28;
+            group.add(bowl);
+
+            // Внутренняя полость
+            const innerGeo = new THREE.LatheGeometry([
+                new THREE.Vector2(0.35, 0.04),
+                new THREE.Vector2(0.44, 0.08),
+                new THREE.Vector2(0.52, 0.18),
+                new THREE.Vector2(0.56, 0.30),
+                new THREE.Vector2(0.54, 0.42),
+                new THREE.Vector2(0.46, 0.48),
+                new THREE.Vector2(0.35, 0.50),
+            ], 48);
+            const inner = new THREE.Mesh(innerGeo, glowMat);
+            inner.position.y = 0.28;
+            group.add(inner);
+
+            // Обод
+            const rimGeo = new THREE.TorusGeometry(0.60, 0.025, 16, 48);
+            const rimMesh = new THREE.Mesh(rimGeo, goldMat);
+            rimMesh.position.y = 0.92;
+            rimMesh.rotation.x = Math.PI / 2;
+            group.add(rimMesh);
+
+            // Ножка
+            const stemGeo = new THREE.CylinderGeometry(0.06, 0.10, 0.40, 16);
+            const stem = new THREE.Mesh(stemGeo, glassMat);
+            stem.position.y = 0.06;
+            group.add(stem);
+
+            // Основание
+            const baseGeo = new THREE.CylinderGeometry(0.30, 0.42, 0.05, 32);
+            const base = new THREE.Mesh(baseGeo, glassMat);
+            base.position.y = -0.14;
+            group.add(base);
+
+            // Блик-полоса
+            const band1 = new THREE.Mesh(
+                new THREE.TorusGeometry(0.52, 0.012, 8, 48),
+                glassHighlightMat
+            );
+            band1.position.y = 0.58;
+            band1.rotation.x = Math.PI / 2;
+            group.add(band1);
+
+            const band2 = new THREE.Mesh(
+                new THREE.TorusGeometry(0.38, 0.012, 8, 48),
+                glassHighlightMat
+            );
+            band2.position.y = 0.38;
+            band2.rotation.x = Math.PI / 2;
+            group.add(band2);
+
+            // ===== ЗВЕЗДА ВНУТРИ =====
+            const starGroup = new THREE.Group();
+            starGroup.position.y = 0.52;
+            group.add(starGroup);
+
+            for (let i = 0; i < 10; i++) {
+                const angle = (i / 10) * Math.PI * 2;
+                const spike = new THREE.Mesh(
+                    new THREE.SphereGeometry(0.022, 6, 6),
+                    new THREE.MeshBasicMaterial({
+                        color: 0x88ccff,
+                        transparent: true,
+                        opacity: 0.3 + Math.random() * 0.2
+                    })
+                );
+                spike.position.set(Math.cos(angle) * 0.14, Math.sin(angle) * 0.14, 0);
+                starGroup.add(spike);
+            }
+
+            const coreStar = new THREE.Mesh(
+                new THREE.SphereGeometry(0.035, 12, 12),
+                new THREE.MeshBasicMaterial({
+                    color: 0xaaddff,
+                    transparent: true,
+                    opacity: 0.6
+                })
+            );
+            starGroup.add(coreStar);
+
+            // ===== КОЛЬЦА =====
+            const ring1 = new THREE.Mesh(
+                new THREE.TorusGeometry(0.85, 0.004, 8, 64),
+                new THREE.MeshBasicMaterial({
+                    color: 0x4488ff,
+                    transparent: true,
+                    opacity: 0.06,
+                    side: THREE.DoubleSide,
+                })
+            );
+            ring1.rotation.x = Math.PI / 2.5;
+            ring1.position.y = 0.28;
+            group.add(ring1);
+
+            const ring2 = new THREE.Mesh(
+                new THREE.TorusGeometry(0.95, 0.003, 8, 64),
+                new THREE.MeshBasicMaterial({
+                    color: 0x88ccff,
+                    transparent: true,
+                    opacity: 0.04,
+                    side: THREE.DoubleSide,
+                })
+            );
+            ring2.rotation.x = Math.PI / 1.8;
+            ring2.rotation.z = 0.7;
+            ring2.position.y = 0.28;
+            group.add(ring2);
+
+            const ring3 = new THREE.Mesh(
+                new THREE.TorusGeometry(0.75, 0.002, 8, 64),
+                new THREE.MeshBasicMaterial({
+                    color: 0xaaddff,
+                    transparent: true,
+                    opacity: 0.03,
+                    side: THREE.DoubleSide,
+                })
+            );
+            ring3.rotation.x = Math.PI / 3.5;
+            ring3.rotation.y = 0.5;
+            ring3.position.y = 0.28;
+            group.add(ring3);
+
+            // ===== ЧАСТИЦЫ (ЗВЁЗДНАЯ ПЫЛЬ) =====
+            const pc = 400;
+            const pGeo = new THREE.BufferGeometry();
+            const pPos = new Float32Array(pc * 3);
+            const pColors = new Float32Array(pc * 3);
+            const pSizes = new Float32Array(pc);
+            const pSpeeds = new Float32Array(pc);
+
+            for (let i = 0; i < pc; i++) {
+                const theta = Math.random() * Math.PI * 2;
+                const phi = Math.random() * Math.PI;
+                const r = 0.6 + Math.random() * 1.8;
+                pPos[i * 3] = Math.sin(phi) * Math.cos(theta) * r;
+                pPos[i * 3 + 1] = Math.sin(phi) * Math.sin(theta) * r * 0.5 + 0.3;
+                pPos[i * 3 + 2] = Math.cos(phi) * r;
+                const c = 0.4 + Math.random() * 0.6;
+                pColors[i * 3] = 0.5 + Math.random() * 0.5;
+                pColors[i * 3 + 1] = 0.5 + Math.random() * 0.5;
+                pColors[i * 3 + 2] = 0.8 + Math.random() * 0.2;
+                pSizes[i] = 0.004 + Math.random() * 0.018;
+                pSpeeds[i] = 0.3 + Math.random() * 0.7;
+            }
+
+            pGeo.setAttribute('position', new THREE.BufferAttribute(pPos, 3));
+            pGeo.setAttribute('color', new THREE.BufferAttribute(pColors, 3));
+            pGeo.setAttribute('size', new THREE.BufferAttribute(pSizes, 1));
+
+            const pMat = new THREE.PointsMaterial({
+                size: 0.018,
+                transparent: true,
+                opacity: 0.5,
+                vertexColors: true,
+                blending: THREE.AdditiveBlending,
+                depthWrite: false,
+                sizeAttenuation: true,
+            });
+
+            const particles = new THREE.Points(pGeo, pMat);
+            group.add(particles);
+
+            // ===== МЫШЬ =====
+            let mouseX = 0,
+                mouseY = 0;
+            let targetRotY = 0,
+                targetRotX = 0;
+
+            document.addEventListener('mousemove', (e) => {
+                mouseX = (e.clientX / window.innerWidth - 0.5) * 2;
+                mouseY = (e.clientY / window.innerHeight - 0.5) * 2;
+                targetRotY = mouseX * 0.35;
+                targetRotX = mouseY * 0.15;
+            });
+
+            // ===== КЛИК ПО КУБКУ =====
+            let clickBoost = 0;
+
+            document.getElementById('three-container').addEventListener('click', () => {
+                clickBoost = 1.2;
+                const flash = document.createElement('div');
+                flash.style.cssText = `
+                    position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+                    background: radial-gradient(circle at center, rgba(80,170,255,0.06), transparent 60%);
+                    pointer-events: none; z-index: 0;
+                    animation: flashOut 0.8s ease-out forwards;
+                `;
+                document.body.prepend(flash);
+                setTimeout(() => flash.remove(), 800);
+            });
+
+            // ===== АНИМАЦИЯ =====
+            let time = 0;
+
+            function animate() {
+                requestAnimationFrame(animate);
+                time += 0.006;
+
+                // Вращение
+                group.rotation.y += (targetRotY - group.rotation.y) * 0.04;
+                group.rotation.x += (targetRotX - group.rotation.x) * 0.04;
+
+                // Автовращение
+                group.rotation.y += 0.0015 + clickBoost * 0.005;
+
+                // Клик-ускорение
+                if (clickBoost > 0) {
+                    clickBoost *= 0.97;
+                    if (clickBoost < 0.01) clickBoost = 0;
+                }
+
+                // Парение
+                group.position.y = Math.sin(time * 0.5) * 0.04;
+
+                // Звезда
+                starGroup.rotation.z = time * 1.2;
+                starGroup.rotation.x = Math.sin(time * 0.6) * 0.12;
+                coreStar.material.opacity = 0.4 + Math.sin(time * 1.8) * 0.25;
+                coreStar.scale.setScalar(1 + Math.sin(time * 1.4) * 0.06);
+
+                // Кольца
+                ring1.rotation.z = time * 0.2;
+                ring2.rotation.y = time * 0.15;
+                ring3.rotation.x = time * 0.12;
+
+                // Частицы
+                particles.rotation.y = time * 0.04;
+                particles.rotation.x = Math.sin(time * 0.025) * 0.025;
+
+                // Блики
+                band1.material.opacity = 0.05 + Math.sin(time * 1.3) * 0.035;
+                band2.material.opacity = 0.035 + Math.sin(time * 1.6 + 1) * 0.025;
+
+                // Стекло
+                glassMat.opacity = 0.18 + Math.sin(time * 0.7) * 0.04;
+
+                renderer.render(scene, camera);
+            }
+
+            animate();
+
+            window.addEventListener('resize', () => {
+                const w = window.innerWidth;
+                const h = window.innerHeight;
+                camera.aspect = w / h;
+                camera.updateProjectionMatrix();
+                renderer.setSize(w, h);
+            });
+
+        })();
+
+        // ===== КЛИК ПО КАРТОЧКАМ =====
+        function handleCardClick(element) {
+            const rect = element.getBoundingClientRect();
+            const size = Math.max(rect.width, rect.height) * 0.5;
+            const cx = event?.clientX || rect.left + rect.width / 2;
+            const cy = event?.clientY || rect.top + rect.height / 2;
+            const x = cx - rect.left - size / 2;
+            const y = cy - rect.top - size / 2;
+
+            const ripple = document.createElement('div');
+            ripple.className = 'ripple-effect';
+            ripple.style.width = size + 'px';
+            ripple.style.height = size + 'px';
+            ripple.style.left = x + 'px';
+            ripple.style.top = y + 'px';
+            element.appendChild(ripple);
+            setTimeout(() => ripple.remove(), 700);
+
+            element.style.transition = 'transform 0.08s ease';
+            element.style.transform = 'scale(0.97)';
+            setTimeout(() => {
+                element.style.transform = '';
+            }, 150);
+        }
+    </script>
+
+</body>
+</html>
