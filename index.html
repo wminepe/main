@@ -1,844 +1,995 @@
 <!DOCTYPE html>
 <html lang="ru">
 <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-    <title>ShineAwards 2027</title>
-    <link rel="preconnect" href="https://fonts.googleapis.com" />
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,300;14..32,400;14..32,500;14..32,600;14..32,700&family=Playfair+Display:ital,wght@0,600;0,700;0,800;1,600&display=swap" rel="stylesheet" />
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=yes, viewport-fit=cover">
+    <title>ShineAwards 2027 | IronMine</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,400;14..32,500;14..32,600;14..32,700;14..32,800;14..32,900&family=Montserrat+Alternates:wght@500;600;700;800;900&display=swap" rel="stylesheet">
     <style>
-        /* ===== БАЗА ===== */
+        :root {
+            --card-bg: rgba(12, 28, 50, 0.5);
+            --section-bg: rgba(18, 38, 68, 0.38);
+            --border: rgba(255, 255, 255, 0.15);
+            --text: #ecf5ff;
+            --text-secondary: #b6d4f8;
+            --gold: #ffe9a0;
+            --glow: rgba(90, 170, 240, 0.45);
+            --tg-blue: #2AABEE;
+            --border-radius-card: clamp(40px, 6vw, 60px);
+            --padding-card: clamp(20px, 5vw, 55px);
+        }
+
         * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
         }
 
-        body {
-            min-height: 100vh;
-            background: #060a14;
-            font-family: 'Inter', sans-serif;
-            color: #e8f0ff;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            padding: 1.5rem 1rem;
-            overflow: hidden;
-            cursor: default;
+        html {
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+            overflow-x: hidden;
+            width: 100%;
         }
 
-        /* ===== 3D КОНТЕЙНЕР ===== */
-        #three-container {
+        body {
+            font-family: 'Inter', sans-serif;
+            min-height: 100vh;
+            min-height: 100dvh;
+            background: #0a1628;
+            background-image:
+                radial-gradient(ellipse at 15% 25%, #173050 0%, transparent 55%),
+                radial-gradient(ellipse at 85% 75%, #0f2840 0%, transparent 55%),
+                radial-gradient(ellipse at 50% 50%, #0e2038 0%, #080e1c 100%);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 30px 16px;
+            position: relative;
+            overflow-x: hidden;
+            gap: 24px;
+            cursor: default;
+            -webkit-tap-highlight-color: transparent;
+            width: 100%;
+            max-width: 100vw;
+        }
+
+        /* Звёзды */
+        .stars-container {
             position: fixed;
             top: 0;
             left: 0;
             width: 100%;
             height: 100%;
-            z-index: 0;
             pointer-events: none;
-        }
-        #three-container canvas {
-            display: block;
-            width: 100% !important;
-            height: 100% !important;
-        }
-
-        /* ===== СТЕКЛЯННЫЙ КОНТЕЙНЕР ===== */
-        .glass-container {
-            max-width: 1080px;
-            width: 100%;
-            background: rgba(8, 18, 38, 0.22);
-            backdrop-filter: blur(32px) saturate(1.8);
-            -webkit-backdrop-filter: blur(32px) saturate(1.8);
-            border-radius: 64px;
-            padding: 3rem 3rem;
-            border: 1px solid rgba(130, 180, 255, 0.06);
-            box-shadow: 0 40px 140px rgba(0, 0, 0, 0.7),
-                        inset 0 1px 0 rgba(255, 255, 255, 0.02);
-            position: relative;
             z-index: 1;
-            animation: fadeIn 1.6s cubic-bezier(0.23, 1, 0.32, 1);
-            pointer-events: none;
-        }
-        .glass-container * {
-            pointer-events: auto;
-        }
-
-        @keyframes fadeIn {
-            0% { opacity: 0; transform: scale(0.94) translateY(30px); }
-            100% { opacity: 1; transform: scale(1) translateY(0); }
-        }
-
-        .glass-container::before {
-            content: '';
-            position: absolute;
-            top: -30%;
-            left: -20%;
-            width: 80%;
-            height: 80%;
-            background: radial-gradient(ellipse, rgba(70, 150, 255, 0.04) 0%, transparent 70%);
-            pointer-events: none;
-            border-radius: 50%;
-            animation: glowPulse 8s ease-in-out infinite;
-        }
-
-        @keyframes glowPulse {
-            0%, 100% { opacity: 0.4; transform: scale(1); }
-            50% { opacity: 1; transform: scale(1.12); }
-        }
-
-        /* ===== ХЕДЕР ===== */
-        .header {
-            text-align: center;
-            margin-bottom: 2rem;
-            position: relative;
-            z-index: 2;
-        }
-
-        .header__badge {
-            display: inline-block;
-            font-size: 0.65rem;
-            font-weight: 500;
-            letter-spacing: 0.28em;
-            text-transform: uppercase;
-            color: #8bb4f0;
-            background: rgba(30, 60, 120, 0.15);
-            backdrop-filter: blur(4px);
-            padding: 0.3rem 1.8rem;
-            border-radius: 60px;
-            border: 1px solid rgba(130, 180, 255, 0.06);
-            margin-bottom: 0.8rem;
-            animation: slideDown 0.8s ease-out 0.2s both;
-        }
-
-        @keyframes slideDown {
-            0% { opacity: 0; transform: translateY(-12px); }
-            100% { opacity: 1; transform: translateY(0); }
-        }
-
-        .header__title {
-            font-family: 'Playfair Display', serif;
-            font-weight: 800;
-            font-size: clamp(3.2rem, 10vw, 5.8rem);
-            letter-spacing: -0.02em;
-            background: linear-gradient(180deg, #f0f8ff 0%, #8bb4f0 45%, #4a7ec9 100%);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            background-clip: text;
-            text-shadow: 0 8px 80px rgba(50, 120, 255, 0.08);
-            line-height: 1.05;
-            animation: fadeIn 1s ease-out 0.3s both;
-        }
-
-        .header__year {
-            font-family: 'Playfair Display', serif;
-            font-weight: 700;
-            font-size: clamp(1.4rem, 3.5vw, 2.6rem);
-            color: rgba(160, 200, 255, 0.18);
-            letter-spacing: 0.6em;
-            margin-top: -0.2rem;
-            animation: fadeIn 1s ease-out 0.5s both;
-        }
-
-        .header__sub {
-            display: inline-block;
-            margin-top: 0.4rem;
-            font-size: clamp(0.9rem, 1.6vw, 1.2rem);
-            font-weight: 400;
-            color: #b8d0f0;
-            background: rgba(20, 50, 90, 0.12);
-            backdrop-filter: blur(4px);
-            padding: 0.15rem 2.2rem;
-            border-radius: 60px;
-            border: 1px solid rgba(130, 180, 255, 0.04);
-            letter-spacing: 0.14em;
-            animation: fadeIn 1s ease-out 0.6s both;
-        }
-
-        /* ===== СТЕКЛЯННАЯ КАРТА (общий стиль) ===== */
-        .glass-card {
-            background: rgba(14, 30, 55, 0.15);
-            backdrop-filter: blur(14px) saturate(1.4);
-            -webkit-backdrop-filter: blur(14px) saturate(1.4);
-            border: 1px solid rgba(130, 180, 255, 0.05);
-            border-radius: 40px;
-            padding: 1.8rem 2rem;
-            box-shadow: 0 8px 48px rgba(0, 10, 30, 0.2),
-                        inset 0 1px 0 rgba(255, 255, 255, 0.02);
-            transition: all 0.5s cubic-bezier(0.23, 1, 0.32, 1);
-            cursor: pointer;
-            position: relative;
             overflow: hidden;
         }
 
-        .glass-card::before {
-            content: '';
+        .star {
             position: absolute;
-            top: -60%;
-            left: -60%;
-            width: 200%;
-            height: 200%;
-            background: radial-gradient(circle at 30% 20%, rgba(130, 180, 255, 0.015), transparent 60%);
+            width: 2px;
+            height: 2px;
+            background: #fff;
+            border-radius: 50%;
+            animation: twinkle var(--duration) ease-in-out infinite;
+            animation-delay: var(--delay);
+            opacity: 0;
+            box-shadow: 0 0 6px 2px rgba(180, 220, 255, 0.8), 0 0 12px 4px rgba(130, 190, 240, 0.4);
+        }
+
+        @keyframes twinkle {
+            0%, 100% { opacity: 0; transform: scale(0.8); }
+            30% { opacity: 0.7; transform: scale(1.2); }
+            60% { opacity: 0.2; transform: scale(0.9); }
+            80% { opacity: 0.9; transform: scale(1.4); }
+        }
+
+        /* Облака */
+        .clouds-container {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
             pointer-events: none;
-            transition: opacity 0.6s;
+            z-index: 0;
+            overflow: hidden;
         }
 
-        .glass-card:hover {
-            border-color: rgba(130, 180, 255, 0.12);
-            background: rgba(22, 46, 78, 0.20);
-            transform: translateY(-4px) scale(1.008);
-            box-shadow: 0 20px 70px rgba(0, 20, 60, 0.3);
+        .cloud {
+            position: absolute;
+            border-radius: 50%;
+            opacity: 0.14;
+            will-change: auto;
         }
 
-        .glass-card:active {
-            transform: scale(0.97);
-            transition-duration: 0.08s;
+        .cloud:nth-child(1) {
+            width: 50vw;
+            height: 35vw;
+            max-width: 550px;
+            max-height: 380px;
+            top: -5%;
+            left: -10%;
+            background: radial-gradient(circle, rgba(130, 190, 240, 0.85) 0%, rgba(70, 130, 200, 0.2) 60%, transparent 90%);
+            box-shadow: 0 0 15vw rgba(100, 160, 220, 0.2);
+        }
+        .cloud:nth-child(2) {
+            width: 45vw;
+            height: 30vw;
+            max-width: 500px;
+            max-height: 330px;
+            top: 55%;
+            right: -8%;
+            background: radial-gradient(circle, rgba(150, 200, 240, 0.75) 0%, rgba(80, 140, 200, 0.18) 60%, transparent 90%);
+            box-shadow: 0 0 12vw rgba(90, 150, 210, 0.18);
+        }
+        .cloud:nth-child(3) {
+            width: 60vw;
+            height: 40vw;
+            max-width: 650px;
+            max-height: 430px;
+            bottom: -10%;
+            left: 10%;
+            background: radial-gradient(circle, rgba(120, 180, 230, 0.8) 0%, rgba(60, 120, 190, 0.2) 60%, transparent 90%);
+            box-shadow: 0 0 14vw rgba(110, 170, 230, 0.2);
+        }
+        .cloud:nth-child(4) {
+            width: 35vw;
+            height: 25vw;
+            max-width: 400px;
+            max-height: 280px;
+            top: 20%;
+            left: 48%;
+            background: radial-gradient(circle, rgba(160, 210, 250, 0.75) 0%, rgba(90, 150, 210, 0.18) 60%, transparent 90%);
+            box-shadow: 0 0 10vw rgba(120, 180, 240, 0.18);
         }
 
-        .glass-card--highlight {
-            background: rgba(30, 65, 120, 0.12);
-            border-color: rgba(90, 160, 255, 0.06);
-        }
-
-        /* ===== НОВОСТИ ===== */
-        .news-section {
-            margin: 2rem 0;
+        /* Карточка */
+        .main-card {
             position: relative;
             z-index: 2;
-        }
-
-        .news-section__label {
-            display: flex;
-            align-items: center;
-            gap: 0.8rem;
-            font-size: 0.65rem;
-            font-weight: 500;
-            letter-spacing: 0.24em;
-            text-transform: uppercase;
-            color: #7aa3e0;
-            margin-bottom: 1rem;
-            animation: slideDown 0.8s ease-out 0.8s both;
-        }
-
-        .news-section__label::after {
-            content: '';
-            flex: 1;
-            height: 1px;
-            background: linear-gradient(90deg, rgba(130, 180, 255, 0.08), transparent);
-        }
-
-        .news-grid {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 1.5rem;
-        }
-
-        .news-card {
-            background: rgba(10, 22, 42, 0.18);
-            backdrop-filter: blur(8px);
-            -webkit-backdrop-filter: blur(8px);
-            border-radius: 28px;
-            padding: 1.5rem 1.8rem 1.8rem;
-            border: 1px solid rgba(130, 180, 255, 0.03);
-            transition: all 0.4s ease;
-            cursor: pointer;
-            animation: fadeIn 0.9s ease-out 0.6s both;
-        }
-        .news-card:nth-child(2) { animation-delay: 0.8s; }
-
-        .news-card:hover {
-            border-color: rgba(130, 180, 255, 0.10);
-            background: rgba(18, 38, 68, 0.20);
-            transform: translateY(-3px);
-        }
-
-        .news-card__date {
-            font-size: 0.55rem;
-            text-transform: uppercase;
-            letter-spacing: 0.2em;
-            color: #7a9bc9;
-            font-weight: 500;
-            margin-bottom: 0.3rem;
-        }
-
-        .news-card__title {
-            font-family: 'Playfair Display', serif;
-            font-weight: 700;
-            font-size: 1.2rem;
-            color: #e0edff;
-            margin-bottom: 0.3rem;
-        }
-
-        .news-card__desc {
-            font-size: 0.95rem;
-            color: #b8d0f0;
-            line-height: 1.7;
-            font-weight: 300;
-        }
-
-        .news-card__tag {
-            display: inline-block;
-            margin-top: 0.6rem;
-            font-size: 0.5rem;
-            font-weight: 600;
-            text-transform: uppercase;
-            letter-spacing: 0.14em;
-            background: rgba(45, 85, 150, 0.10);
-            color: #8bb4f0;
-            padding: 0.1rem 1.2rem;
-            border-radius: 40px;
-            border: 1px solid rgba(130, 180, 255, 0.03);
-            transition: all 0.3s;
-        }
-        .news-card:hover .news-card__tag {
-            background: rgba(45, 85, 150, 0.16);
-            border-color: rgba(130, 180, 255, 0.06);
-        }
-
-        /* ===== ИНФО-ГРИД ===== */
-        .info-grid {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 1.8rem;
-            margin: 2rem 0;
-            position: relative;
-            z-index: 2;
-        }
-
-        .info-card__icon {
-            font-size: 2rem;
-            margin-bottom: 0.4rem;
-            display: block;
-            opacity: 0.6;
-            transition: transform 0.4s ease;
-        }
-        .glass-card:hover .info-card__icon {
-            transform: scale(1.12) rotate(-4deg);
-        }
-
-        .info-card h3 {
-            font-family: 'Playfair Display', serif;
-            font-weight: 700;
-            font-size: 1.2rem;
-            color: #e0edff;
-            margin-bottom: 0.3rem;
-        }
-
-        .info-card p {
-            font-size: 0.95rem;
-            color: #b8d0f0;
-            line-height: 1.8;
-            font-weight: 300;
-        }
-
-        /* ===== ЦИТАТА ===== */
-        .quote {
-            margin: 2rem 0;
-            padding: 2rem 2.8rem;
-            background: rgba(10, 22, 42, 0.12);
+            width: 100%;
+            max-width: 960px;
+            background: var(--card-bg);
             backdrop-filter: blur(10px);
             -webkit-backdrop-filter: blur(10px);
-            border-radius: 48px;
-            border: 1px solid rgba(130, 180, 255, 0.03);
+            border-radius: var(--border-radius-card);
+            padding: var(--padding-card);
+            box-shadow:
+                0 35px 70px rgba(0, 0, 0, 0.45),
+                0 10px 25px rgba(0, 0, 0, 0.3),
+                inset 0 1px 0 rgba(255, 255, 255, 0.1),
+                0 0 0 8px rgba(255, 255, 255, 0.03),
+                0 0 60px var(--glow);
+        }
+
+        /* Пушистые уголки */
+        .fur-trim {
+            position: absolute;
+            border-radius: 50%;
+            z-index: 0;
+            pointer-events: none;
+            opacity: 0.7;
+        }
+        .fur-trim.top-left {
+            width: clamp(60px, 10vw, 140px);
+            height: clamp(45px, 7vw, 105px);
+            top: -12px;
+            left: -14px;
+            background: radial-gradient(circle, rgba(185, 220, 250, 0.65) 0%, rgba(130, 180, 230, 0.2) 50%, transparent 80%);
+        }
+        .fur-trim.top-right {
+            width: clamp(55px, 9vw, 125px);
+            height: clamp(40px, 6vw, 95px);
+            top: -10px;
+            right: -12px;
+            background: radial-gradient(circle, rgba(175, 215, 245, 0.6) 0%, rgba(120, 170, 220, 0.2) 50%, transparent 80%);
+        }
+        .fur-trim.bottom-left {
+            width: clamp(60px, 10vw, 130px);
+            height: clamp(45px, 7vw, 105px);
+            bottom: -14px;
+            left: -10px;
+            background: radial-gradient(circle, rgba(180, 215, 245, 0.6) 0%, rgba(125, 175, 225, 0.2) 50%, transparent 80%);
+        }
+        .fur-trim.bottom-right {
+            width: clamp(50px, 8vw, 120px);
+            height: clamp(38px, 6vw, 95px);
+            bottom: -12px;
+            right: -8px;
+            background: radial-gradient(circle, rgba(170, 210, 240, 0.55) 0%, rgba(115, 165, 215, 0.2) 50%, transparent 80%);
+        }
+
+        /* Заголовок */
+        .header {
             text-align: center;
+            margin-bottom: clamp(18px, 4vw, 36px);
             position: relative;
-            z-index: 2;
-            transition: all 0.5s ease;
-            cursor: default;
-        }
-        .quote:hover {
-            border-color: rgba(130, 180, 255, 0.06);
-            background: rgba(14, 30, 55, 0.12);
+            z-index: 3;
+            width: 100%;
         }
 
-        .quote blockquote {
-            font-family: 'Playfair Display', serif;
+        .ironmine-tag {
+            font-family: 'Montserrat Alternates', sans-serif;
             font-weight: 600;
-            font-style: italic;
-            font-size: 1.15rem;
-            color: #c8ddf5;
-            line-height: 1.8;
+            font-size: clamp(0.65rem, 2vw, 0.95rem);
+            letter-spacing: 3px;
+            text-transform: uppercase;
+            color: rgba(185, 215, 245, 0.85);
+            margin-bottom: 6px;
+            text-shadow: 0 0 20px rgba(100, 160, 220, 0.5);
+            word-break: keep-all;
+            opacity: 0;
+            animation: fadeInUp 0.8s ease forwards;
+            animation-delay: 0.3s;
         }
 
-        .quote blockquote::before {
-            content: "“";
-            font-size: 2.4rem;
-            color: #7aa3e0;
-            margin-right: 0.2rem;
-            opacity: 0.2;
-        }
-        .quote blockquote::after {
-            content: "”";
-            font-size: 2.4rem;
-            color: #7aa3e0;
-            margin-left: 0.2rem;
-            opacity: 0.2;
-        }
-
-        .quote__author {
-            margin-top: 0.5rem;
-            font-size: 0.7rem;
-            font-weight: 400;
-            letter-spacing: 0.12em;
-            color: #7a9bc9;
+        .shine-title {
+            font-family: 'Montserrat Alternates', sans-serif;
+            font-weight: 900;
+            font-size: clamp(2.2rem, 12vw, 6rem);
+            letter-spacing: 2px;
+            line-height: 1.1;
+            margin: 0;
+            word-break: keep-all;
+            overflow-wrap: break-word;
+            hyphens: none;
+            display: flex;
+            justify-content: center;
+            flex-wrap: wrap;
+            gap: 0;
         }
 
-        /* ===== ЛИНИЯ ===== */
-        .divider {
+        .title-letter {
+            display: inline-block;
+            background: linear-gradient(180deg, #ffffff 20%, #c8e5ff 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            filter: drop-shadow(0 4px 18px rgba(80, 155, 225, 0.85));
+            opacity: 0;
+            animation: letterFlyIn 0.7s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+        }
+
+        @keyframes letterFlyIn {
+            0% {
+                opacity: 0;
+                transform: translateY(-60px) rotateY(90deg) scale(0.5);
+                filter: drop-shadow(0 4px 18px rgba(80, 155, 225, 0)) blur(4px);
+            }
+            60% {
+                opacity: 1;
+                transform: translateY(8px) rotateY(-10deg) scale(1.08);
+                filter: drop-shadow(0 4px 18px rgba(80, 155, 225, 0.85)) blur(0px);
+            }
+            80% {
+                transform: translateY(-3px) rotateY(3deg) scale(0.96);
+            }
+            100% {
+                opacity: 1;
+                transform: translateY(0) rotateY(0deg) scale(1);
+                filter: drop-shadow(0 4px 18px rgba(80, 155, 225, 0.85)) blur(0px);
+            }
+        }
+
+        @keyframes fadeInUp {
+            0% {
+                opacity: 0;
+                transform: translateY(15px);
+            }
+            100% {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .year-badge {
+            font-family: 'Montserrat Alternates', sans-serif;
+            font-weight: 800;
+            font-size: clamp(1.2rem, 4vw, 2.6rem);
+            color: var(--gold);
+            text-shadow: 0 0 40px rgba(255, 217, 102, 0.7), 0 0 18px rgba(255, 255, 255, 0.6);
+            letter-spacing: 6px;
+            margin-top: 6px;
+            opacity: 0;
+            animation: fadeInUp 0.8s ease forwards;
+            animation-delay: 1.2s;
+        }
+
+        .subtitle {
+            font-family: 'Montserrat Alternates', sans-serif;
+            font-weight: 600;
+            font-size: clamp(0.75rem, 2vw, 1.1rem);
+            color: #c4dfff;
+            margin-top: 6px;
+            letter-spacing: 1px;
+            text-shadow: 0 0 20px rgba(100, 170, 230, 0.4);
+            opacity: 0;
+            animation: fadeInUp 0.8s ease forwards;
+            animation-delay: 1.4s;
+        }
+
+        /* Секции */
+        .section {
+            background: var(--section-bg);
+            backdrop-filter: blur(8px);
+            -webkit-backdrop-filter: blur(8px);
+            border-radius: clamp(24px, 4vw, 40px);
+            padding: clamp(16px, 3vw, 30px) clamp(16px, 4vw, 35px);
+            margin-bottom: clamp(14px, 3vw, 26px);
+            border: 1px solid var(--border);
+            box-shadow: 0 6px 22px rgba(0, 0, 0, 0.2), inset 0 1px 0 rgba(255, 255, 255, 0.08);
+            position: relative;
+            z-index: 3;
+            width: 100%;
+            overflow: visible;
+            opacity: 0;
+            animation: fadeInUp 0.8s ease forwards;
+        }
+        .section:nth-child(2) { animation-delay: 1.6s; }
+        .section:nth-child(3) { animation-delay: 1.8s; }
+        .section:nth-child(4) { animation-delay: 2.0s; }
+        .section:last-of-type {
+            margin-bottom: 0;
+        }
+
+        .section-title {
+            font-family: 'Montserrat Alternates', sans-serif;
+            font-weight: 700;
+            font-size: clamp(1.1rem, 3vw, 1.7rem);
+            color: #fff;
+            text-shadow: 0 2px 10px rgba(30, 80, 140, 0.5);
+            margin-bottom: 12px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            flex-wrap: wrap;
+            border-bottom: 2px dashed rgba(255, 255, 255, 0.2);
+            padding-bottom: 10px;
+        }
+
+        .badge-inline {
+            font-family: 'Montserrat Alternates', sans-serif;
+            font-size: clamp(0.6rem, 1.5vw, 0.85rem);
+            background: rgba(255, 245, 200, 0.12);
+            padding: 3px 12px;
+            border-radius: 30px;
+            color: var(--gold);
+            font-weight: 600;
+            letter-spacing: 0.5px;
+            white-space: nowrap;
+        }
+
+        .dates-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+            gap: 12px;
+        }
+
+        /* Карточки дат с бликом */
+        .date-card {
+            background: rgba(28, 52, 85, 0.45);
+            border-radius: 24px;
+            padding: 16px 20px;
+            text-align: center;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            box-shadow: 0 6px 18px rgba(0, 0, 0, 0.25);
+            color: #fff;
+            position: relative;
+            overflow: hidden;
+            cursor: pointer;
+            transition: transform 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease;
+        }
+
+        .date-card::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(
+                90deg,
+                transparent 0%,
+                rgba(255, 255, 255, 0.08) 25%,
+                rgba(255, 255, 255, 0.18) 50%,
+                rgba(255, 255, 255, 0.08) 75%,
+                transparent 100%
+            );
+            transition: left 0.5s ease;
+            pointer-events: none;
+        }
+
+        .date-card:hover::after,
+        .date-card:active::after {
+            left: 100%;
+        }
+
+        .date-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.35), 0 0 15px rgba(100, 170, 240, 0.25);
+            border-color: rgba(255, 255, 255, 0.3);
+        }
+
+        .date-question {
+            font-family: 'Montserrat Alternates', sans-serif;
+            font-size: clamp(1.2rem, 3.5vw, 2.2rem);
+            font-weight: 800;
+            letter-spacing: 2px;
+            text-shadow: 0 0 20px rgba(150, 200, 255, 0.5);
+            position: relative;
+            z-index: 1;
+            word-break: keep-all;
+        }
+
+        .date-label {
+            color: #c4d9f8;
+            font-weight: 500;
+            font-size: clamp(0.75rem, 1.8vw, 0.95rem);
+            margin-top: 4px;
+            position: relative;
+            z-index: 1;
             display: flex;
             align-items: center;
             justify-content: center;
-            gap: 1.2rem;
-            margin: 2rem 0 1.5rem;
-            opacity: 0.12;
-            position: relative;
-            z-index: 2;
-        }
-        .divider__line {
-            height: 1px;
-            flex: 1;
-            background: linear-gradient(90deg, transparent, rgba(130, 180, 255, 0.12), transparent);
-        }
-        .divider__diamond {
-            color: #7aa3e0;
-            font-size: 0.5rem;
-            letter-spacing: 0.1em;
-            animation: pulseDiamond 2.5s ease-in-out infinite;
-        }
-        @keyframes pulseDiamond {
-            0%, 100% { opacity: 0.2; }
-            50% { opacity: 1; }
-        }
-
-        /* ===== ФУТЕР ===== */
-        .footer {
-            margin-top: 1.5rem;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
+            gap: 4px;
             flex-wrap: wrap;
-            gap: 1rem;
-            padding-top: 1.2rem;
-            border-top: 1px solid rgba(130, 180, 255, 0.03);
-            font-size: 0.7rem;
-            color: #5a7fa8;
+        }
+
+        /* Секретное слово с прыгающими буквами */
+        .secret-word {
+            display: inline-flex;
+            gap: 0;
+            cursor: default;
+            background: rgba(255, 215, 0, 0.15);
+            border-radius: 14px;
+            padding: 2px 10px;
+            font-weight: 700;
+            color: #ffe9a0;
+            letter-spacing: 0.5px;
+            white-space: nowrap;
+        }
+
+        .secret-letter {
+            display: inline-block;
+            transition: transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+            cursor: default;
+        }
+
+        .secret-letter:hover,
+        .secret-letter:active {
+            transform: translateY(-8px);
+        }
+
+        .info-text {
+            color: #c8deff;
+            font-weight: 500;
+            line-height: 1.7;
+            font-size: clamp(0.8rem, 1.8vw, 1rem);
+        }
+
+        .date-note {
+            margin-top: 12px;
+            color: #b0cef5;
+            text-align: center;
+            font-size: clamp(0.75rem, 1.6vw, 0.95rem);
+        }
+
+        .nominations-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+            gap: 10px;
+            margin-top: 12px;
+        }
+
+        /* Номинации с бликом */
+        .nominee {
+            background: rgba(38, 65, 115, 0.4);
+            border-radius: 24px;
+            padding: 10px 14px;
+            font-weight: 600;
+            color: #fff;
+            border: 1px solid rgba(255, 255, 255, 0.18);
+            box-shadow: 0 3px 10px rgba(0, 0, 0, 0.18);
+            transition: background 0.2s, transform 0.2s, border-color 0.2s, box-shadow 0.2s;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            font-size: clamp(0.7rem, 1.6vw, 0.95rem);
+            text-shadow: 0 0 6px rgba(100, 160, 220, 0.35);
+            cursor: pointer;
+            position: relative;
+            overflow: visible;
+        }
+
+        .nominee::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(
+                90deg,
+                transparent 0%,
+                rgba(255, 255, 255, 0.06) 25%,
+                rgba(255, 255, 255, 0.15) 50%,
+                rgba(255, 255, 255, 0.06) 75%,
+                transparent 100%
+            );
+            transition: left 0.5s ease;
+            pointer-events: none;
+            border-radius: 24px;
+            z-index: 1;
+        }
+
+        .nominee:hover::after,
+        .nominee:active::after {
+            left: 100%;
+        }
+
+        .nominee:hover {
+            background: rgba(65, 110, 170, 0.55);
+            transform: translateY(-2px);
+            border-color: rgba(255, 255, 255, 0.3);
+            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.3), 0 0 15px rgba(100, 170, 240, 0.3);
+            z-index: 10;
+        }
+
+        .nominee-emoji {
+            font-size: clamp(1rem, 1.8vw, 1.2rem);
+            flex-shrink: 0;
             position: relative;
             z-index: 2;
         }
-        .footer__team {
-            font-weight: 500;
-            color: #8bb4f0;
-            letter-spacing: 0.04em;
-        }
-        .footer__team span { color: #b0cbea; }
-        .footer__year { color: #4a6f96; }
 
-        /* ===== АДАПТИВ ===== */
-        @media (max-width: 760px) {
-            .glass-container { padding: 1.8rem 1.2rem; border-radius: 40px; }
-            .news-grid, .info-grid { grid-template-columns: 1fr; }
-            .quote { padding: 1.4rem 1.2rem; }
-            .quote blockquote { font-size: 1rem; }
-        }
-        @media (max-width: 420px) {
-            .glass-container { padding: 1rem 0.8rem; border-radius: 28px; }
-            .header__title { font-size: 2.6rem; }
-            .news-card { padding: 1rem; }
-            .news-card__title { font-size: 1rem; }
-            .info-card { padding: 1rem; }
-            .info-card h3 { font-size: 1rem; }
+        .nominee-text {
+            position: relative;
+            z-index: 2;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
         }
 
-        /* ===== RIPPLE ===== */
-        .ripple-effect {
+        /* Кастомный тултип */
+        .nominee-tooltip {
             position: absolute;
-            border-radius: 50%;
-            background: rgba(130, 180, 255, 0.08);
-            border: 1px solid rgba(130, 180, 255, 0.02);
-            animation: rippleAnim 0.7s ease-out forwards;
+            bottom: calc(100% + 10px);
+            left: 50%;
+            transform: translateX(-50%) translateY(8px);
+            background: rgba(10, 24, 45, 0.98);
+            border: 1.5px solid rgba(255, 255, 255, 0.3);
+            border-radius: 14px;
+            padding: 8px 16px;
+            color: #fff;
+            font-weight: 700;
+            font-size: 0.85rem;
+            white-space: nowrap;
+            pointer-events: none;
+            opacity: 0;
+            visibility: hidden;
+            transition: opacity 0.2s ease, transform 0.25s cubic-bezier(0.34, 1.56, 0.64, 1), visibility 0.2s ease;
+            z-index: 20;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5), 0 0 20px rgba(100, 170, 240, 0.25);
+            text-shadow: 0 0 8px rgba(100, 160, 220, 0.5);
+            letter-spacing: 0.3px;
+        }
+
+        .nominee:hover .nominee-tooltip {
+            opacity: 1;
+            visibility: visible;
+            transform: translateX(-50%) translateY(0);
+        }
+
+        .new-note {
+            color: #a6c8f5;
+            margin-top: 12px;
+            font-style: italic;
+            font-size: clamp(0.7rem, 1.5vw, 0.9rem);
+        }
+
+        .footer-quote {
+            text-align: center;
+            margin-top: 20px;
+            font-style: italic;
+            color: #c5dfff;
+            text-shadow: 0 0 14px rgba(50, 100, 160, 0.5);
+            font-weight: 500;
+            line-height: 1.7;
+            font-size: clamp(0.8rem, 1.6vw, 1rem);
+            opacity: 0;
+            animation: fadeInUp 0.8s ease forwards;
+            animation-delay: 2.2s;
+        }
+
+        /* Футер */
+        .site-footer {
+            position: relative;
+            z-index: 2;
+            width: 100%;
+            max-width: 960px;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            justify-content: center;
+            align-items: center;
+            padding: 16px 20px;
+            background: rgba(12, 28, 50, 0.45);
+            backdrop-filter: blur(8px);
+            -webkit-backdrop-filter: blur(8px);
+            border-radius: 40px;
+            border: 1px solid var(--border);
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.3), inset 0 1px 0 rgba(255, 255, 255, 0.08);
+            opacity: 0;
+            animation: fadeInUp 0.8s ease forwards;
+            animation-delay: 2.4s;
+        }
+
+        /* Кнопки Telegram с бликом */
+        .tg-button {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            background: rgba(42, 171, 238, 0.2);
+            border: 1.5px solid rgba(42, 171, 238, 0.45);
+            border-radius: 50px;
+            padding: 10px 20px;
+            color: #fff;
+            font-weight: 600;
+            font-size: clamp(0.8rem, 2vw, 1rem);
+            letter-spacing: 0.3px;
+            text-decoration: none;
+            transition: background 0.2s, border-color 0.2s, transform 0.2s, box-shadow 0.2s;
+            cursor: pointer;
+            text-shadow: 0 0 10px rgba(42, 171, 238, 0.5);
+            box-shadow: 0 4px 14px rgba(0, 0, 0, 0.2);
+            -webkit-tap-highlight-color: transparent;
+            position: relative;
+            overflow: hidden;
+            white-space: nowrap;
+        }
+
+        .tg-button::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(
+                90deg,
+                transparent 0%,
+                rgba(255, 255, 255, 0.12) 25%,
+                rgba(255, 255, 255, 0.25) 50%,
+                rgba(255, 255, 255, 0.12) 75%,
+                transparent 100%
+            );
+            transition: left 0.5s ease;
             pointer-events: none;
         }
-        @keyframes rippleAnim {
-            0% { width: 0; height: 0; opacity: 0.5; }
-            100% { width: 400px; height: 400px; opacity: 0; }
+
+        .tg-button:hover::after,
+        .tg-button:active::after {
+            left: 100%;
         }
 
-        @keyframes flashOut {
-            0% { opacity: 1; }
-            100% { opacity: 0; }
+        .tg-button:hover {
+            background: rgba(42, 171, 238, 0.4);
+            border-color: rgba(42, 171, 238, 0.75);
+            transform: translateY(-2px);
+            box-shadow: 0 8px 24px rgba(42, 171, 238, 0.25);
+        }
+        .tg-button:active {
+            transform: scale(0.97);
+        }
+
+        .tg-emoji {
+            font-size: clamp(1rem, 2vw, 1.3rem);
+            position: relative;
+            z-index: 1;
+        }
+
+        .tg-text {
+            position: relative;
+            z-index: 1;
+        }
+
+        /* Оптимизация для мобилок */
+        @media (max-width: 768px) {
+            body {
+                padding: 12px 10px;
+                gap: 18px;
+            }
+
+            .main-card {
+                backdrop-filter: none;
+                -webkit-backdrop-filter: none;
+                background: rgba(12, 28, 50, 0.65);
+                border-radius: 36px;
+                padding: 22px 16px;
+            }
+
+            .section {
+                backdrop-filter: none;
+                -webkit-backdrop-filter: none;
+                background: rgba(18, 38, 68, 0.5);
+                border-radius: 28px;
+                padding: 16px 14px;
+                margin-bottom: 12px;
+            }
+
+            .site-footer {
+                backdrop-filter: none;
+                -webkit-backdrop-filter: none;
+                background: rgba(12, 28, 50, 0.6);
+                border-radius: 36px;
+                padding: 14px 16px;
+            }
+
+            .nominations-grid {
+                grid-template-columns: repeat(2, 1fr);
+                gap: 8px;
+            }
+
+            .nominee {
+                padding: 8px 10px;
+                border-radius: 20px;
+                gap: 4px;
+            }
+
+            .nominee-tooltip {
+                font-size: 0.75rem;
+                padding: 6px 12px;
+                border-radius: 12px;
+                bottom: calc(100% + 8px);
+            }
+
+            .dates-grid {
+                grid-template-columns: 1fr;
+                gap: 10px;
+            }
+
+            .site-footer {
+                flex-direction: column;
+                gap: 8px;
+            }
+
+            .tg-button {
+                width: 100%;
+                justify-content: center;
+                padding: 12px 18px;
+            }
+
+            .shine-title {
+                font-size: clamp(2.2rem, 16vw, 4rem);
+                letter-spacing: 1px;
+            }
+
+            .year-badge {
+                letter-spacing: 4px;
+            }
+
+            .date-question {
+                font-size: clamp(1.4rem, 6vw, 1.8rem);
+            }
+
+            .secret-letter:hover,
+            .secret-letter:active {
+                transform: translateY(-6px);
+            }
+
+            .fur-trim {
+                opacity: 0.5;
+            }
+
+            .fur-trim.top-left {
+                width: 70px;
+                height: 50px;
+                top: -8px;
+                left: -10px;
+            }
+            .fur-trim.top-right {
+                width: 60px;
+                height: 45px;
+                top: -6px;
+                right: -8px;
+            }
+            .fur-trim.bottom-left {
+                width: 70px;
+                height: 50px;
+                bottom: -10px;
+                left: -8px;
+            }
+            .fur-trim.bottom-right {
+                width: 60px;
+                height: 45px;
+                bottom: -8px;
+                right: -6px;
+            }
+        }
+
+        @media (max-width: 380px) {
+            body {
+                padding: 8px 6px;
+                gap: 14px;
+            }
+
+            .main-card {
+                padding: 18px 12px;
+                border-radius: 30px;
+            }
+
+            .section {
+                padding: 14px 10px;
+                border-radius: 24px;
+            }
+
+            .nominations-grid {
+                grid-template-columns: repeat(2, 1fr);
+                gap: 6px;
+            }
+
+            .nominee {
+                padding: 7px 8px;
+                border-radius: 18px;
+                font-size: 0.7rem;
+            }
+
+            .nominee-emoji {
+                font-size: 0.9rem;
+            }
+
+            .year-badge {
+                font-size: 1rem;
+                letter-spacing: 3px;
+            }
+
+            .date-question {
+                font-size: 1.2rem;
+            }
+        }
+
+        @media (min-width: 481px) and (max-width: 768px) {
+            .nominations-grid {
+                grid-template-columns: repeat(3, 1fr);
+            }
         }
     </style>
 </head>
 <body>
-
-    <!-- ===== 3D СЦЕНА ===== -->
-    <div id="three-container"></div>
-
-    <!-- ===== СТЕКЛЯННЫЙ КОНТЕЙНЕР ===== -->
-    <div class="glass-container">
-
-        <header class="header">
-            <div class="header__badge">✦ IronMine</div>
-            <h1 class="header__title">ShineAwards</h1>
-            <div class="header__year">2027</div>
-            <div class="header__sub">красивое окончание</div>
-        </header>
-
-        <!-- НОВОСТИ -->
-        <section class="news-section">
-            <div class="news-section__label">📰 новости</div>
-            <div class="news-grid">
-                <div class="news-card" onclick="handleCardClick(this)">
-                    <div class="news-card__date">скоро</div>
-                    <div class="news-card__title">Два дня, 28 номинаций</div>
-                    <div class="news-card__desc">Мы подготовили два насыщенных дня. Вас ждут знакомые номинации и несколько сюрпризов.</div>
-                    <span class="news-card__tag">подробности позже</span>
-                </div>
-                <div class="news-card" onclick="handleCardClick(this)">
-                    <div class="news-card__date">скоро</div>
-                    <div class="news-card__title">Аукцион и игры</div>
-                    <div class="news-card__desc">В этом году мы добавили аукцион, мини-игры и лотерею — призы получат не только победители.</div>
-                    <span class="news-card__tag">будет интересно</span>
-                </div>
-            </div>
-        </section>
-
-        <!-- ИНФО-БЛОК -->
-        <div class="info-grid">
-            <div class="glass-card" onclick="handleCardClick(this)">
-                <span class="info-card__icon">🏆</span>
-                <h3>Что такое ShineAwards?</h3>
-                <p>Это главное событие года на IronMine. Мы отмечаем игроков, которые делают сервер ярче — своим трудом, талантом, дружелюбием или просто присутствием.</p>
-            </div>
-            <div class="glass-card glass-card--highlight" onclick="handleCardClick(this)">
-                <span class="info-card__icon">✨</span>
-                <h3>Как это работает?</h3>
-                <p>Голосование анонимное, честное и открытое для всех. Мы объявим все детали, даты и список номинаций в ближайшее время. Следите за новостями!</p>
-            </div>
-        </div>
-
-        <!-- ЦИТАТА -->
-        <div class="quote">
-            <blockquote>
-                Мы создаём праздник, чтобы каждый мог почувствовать себя частью чего-то большого. Это не просто премия — это наша общая история.
-            </blockquote>
-            <div class="quote__author">— ShineTeam & IwwiTeam</div>
-        </div>
-
-        <div class="divider">
-            <span class="divider__line"></span>
-            <span class="divider__diamond">◆</span>
-            <span class="divider__line"></span>
-        </div>
-
-        <footer class="footer">
-            <span class="footer__team">⚡ <span>IwwiTeam</span> · ShineTeam</span>
-            <span class="footer__year">IronMine · 2027</span>
-        </footer>
+    <div class="stars-container" id="stars"></div>
+    <div class="clouds-container">
+        <div class="cloud"></div>
+        <div class="cloud"></div>
+        <div class="cloud"></div>
+        <div class="cloud"></div>
     </div>
 
-    <!-- ===== THREE.JS ===== -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js">
-    </script>
+    <div class="main-card">
+        <div class="fur-trim top-left"></div>
+        <div class="fur-trim top-right"></div>
+        <div class="fur-trim bottom-left"></div>
+        <div class="fur-trim bottom-right"></div>
+
+        <div class="header">
+            <div class="ironmine-tag">IronMine представляет</div>
+            <h1 class="shine-title" id="shineTitle"></h1>
+            <div class="year-badge">2 0 2 7</div>
+            <div class="subtitle">✨ главное событие года ✨</div>
+        </div>
+
+        <div class="section">
+            <div class="section-title">📅 Даты</div>
+            <div class="dates-grid">
+                <div class="date-card">
+                    <div class="date-question">??.07.2027</div>
+                    <div class="date-label">День I</div>
+                </div>
+                <div class="date-card">
+                    <div class="date-question">??.07.2027</div>
+                    <div class="date-label">День II — <span class="secret-word" id="secretWord">кр??????_о???????е</span></div>
+                </div>
+            </div>
+            <p class="date-note">Точные даты объявим весной — следите за новостями! 🌸</p>
+        </div>
+
+        <div class="section">
+            <div class="section-title">🎁 Что нас ждёт?</div>
+            <p class="info-text">
+                ⭐ <strong>30 номинаций:</strong> 15 в первый день, 15 во второй<br>
+                💎 <strong>Аукцион донатных предметов</strong> и небольших привилегий<br>
+                🎉 Призы получат <strong>не только победители</strong>, но и все присутствующие!
+            </p>
+        </div>
+
+        <div class="section">
+            <div class="section-title">
+                🏆 Номинации
+                <span class="badge-inline">20 + 10 новых</span>
+            </div>
+            <div class="nominations-grid">
+                <div class="nominee"><span class="nominee-emoji">👑</span> <span class="nominee-text">Shine-King</span><span class="nominee-tooltip">Shine-King</span></div>
+                <div class="nominee"><span class="nominee-emoji">👑</span> <span class="nominee-text">Shine-Queen</span><span class="nominee-tooltip">Shine-Queen</span></div>
+                <div class="nominee"><span class="nominee-emoji">🛡️</span> <span class="nominee-text">Shine-Clan</span><span class="nominee-tooltip">Shine-Clan</span></div>
+                <div class="nominee"><span class="nominee-emoji">⚔️</span> <span class="nominee-text">Shine-PVP</span><span class="nominee-tooltip">Shine-PVP</span></div>
+                <div class="nominee"><span class="nominee-emoji">💬</span> <span class="nominee-text">Shine-SMS</span><span class="nominee-tooltip">Shine-SMS</span></div>
+                <div class="nominee"><span class="nominee-emoji">🌟</span> <span class="nominee-text">Shine-Popular</span><span class="nominee-tooltip">Shine-Popular</span></div>
+                <div class="nominee"><span class="nominee-emoji">📅</span> <span class="nominee-text">Shine-Year</span><span class="nominee-tooltip">Shine-Year</span></div>
+                <div class="nominee"><span class="nominee-emoji">🚫</span> <span class="nominee-text">Shine-ЧС</span><span class="nominee-tooltip">Shine-ЧС</span></div>
+                <div class="nominee"><span class="nominee-emoji">🏗️</span> <span class="nominee-text">Shine-Base</span><span class="nominee-tooltip">Shine-Base</span></div>
+                <div class="nominee"><span class="nominee-emoji">🔝</span> <span class="nominee-text">Shine-Top</span><span class="nominee-tooltip">Shine-Top</span></div>
+                <div class="nominee"><span class="nominee-emoji">🍬</span> <span class="nominee-text">Shine-Sweet</span><span class="nominee-tooltip">Shine-Sweet</span></div>
+                <div class="nominee"><span class="nominee-emoji">💵</span> <span class="nominee-text">Shine-Dollar</span><span class="nominee-tooltip">Shine-Dollar</span></div>
+                <div class="nominee"><span class="nominee-emoji">🤝</span> <span class="nominee-text">Shine-Friend</span><span class="nominee-tooltip">Shine-Friend</span></div>
+                <div class="nominee"><span class="nominee-emoji">🌾</span> <span class="nominee-text">Shine-Farmer</span><span class="nominee-tooltip">Shine-Farmer</span></div>
+                <div class="nominee"><span class="nominee-emoji">🤖</span> <span class="nominee-text">Shine-Mech</span><span class="nominee-tooltip">Shine-Mech</span></div>
+                <div class="nominee"><span class="nominee-emoji">🛠️</span> <span class="nominee-text">Shine-Helper</span><span class="nominee-tooltip">Shine-Helper</span></div>
+                <div class="nominee"><span class="nominee-emoji">💞</span> <span class="nominee-text">Shine-Pair</span><span class="nominee-tooltip">Shine-Pair</span></div>
+                <div class="nominee"><span class="nominee-emoji">🏕️</span> <span class="nominee-text">Shine-Camper</span><span class="nominee-tooltip">Shine-Camper</span></div>
+                <div class="nominee"><span class="nominee-emoji">👻</span> <span class="nominee-text">Shine-Ghost</span><span class="nominee-tooltip">Shine-Ghost</span></div>
+                <div class="nominee"><span class="nominee-emoji">✈️</span> <span class="nominee-text">Shine-Telegram</span><span class="nominee-tooltip">Shine-Telegram</span></div>
+            </div>
+            <p class="new-note">✨ Новые 10 номинаций анонсируем весной!</p>
+        </div>
+
+        <div class="footer-quote">
+            💙 Мы создаём праздник, чтобы каждый почувствовал себя частью чего-то большого.<br>
+            Это не просто премия — это наша общая история. Момент, который останется с нами навсегда.
+        </div>
+    </div>
+
+    <footer class="site-footer">
+        <a href="https://t.me/shine_awards" target="_blank" rel="noopener noreferrer" class="tg-button">
+            <span class="tg-emoji">✈️</span> <span class="tg-text">@shine_awards</span>
+        </a>
+        <a href="https://t.me/notworkch" target="_blank" rel="noopener noreferrer" class="tg-button">
+            <span class="tg-emoji">👤</span> <span class="tg-text">@notworkch</span>
+        </a>
+    </footer>
+
     <script>
-        (function() {
-            const container = document.getElementById('three-container');
-            const width = window.innerWidth;
-            const height = window.innerHeight;
+        // Генерация звёзд
+        const starsContainer = document.getElementById('stars');
+        const starCount = 40;
+        for (let i = 0; i < starCount; i++) {
+            const star = document.createElement('div');
+            star.classList.add('star');
+            star.style.left = Math.random() * 100 + '%';
+            star.style.top = Math.random() * 100 + '%';
+            star.style.setProperty('--duration', (2 + Math.random() * 4) + 's');
+            star.style.setProperty('--delay', Math.random() * 5 + 's');
+            star.style.width = (1 + Math.random() * 2) + 'px';
+            star.style.height = star.style.width;
+            starsContainer.appendChild(star);
+        }
 
-            const scene = new THREE.Scene();
+        // Анимация заголовка — буквы подлетают
+        const titleText = 'ShineAwards';
+        const shineTitle = document.getElementById('shineTitle');
+        shineTitle.innerHTML = '';
+        const letters = titleText.split('');
+        letters.forEach((letter, index) => {
+            const span = document.createElement('span');
+            span.classList.add('title-letter');
+            span.textContent = letter;
+            span.style.animationDelay = `${0.4 + index * 0.08}s`;
+            shineTitle.appendChild(span);
+        });
 
-            const camera = new THREE.PerspectiveCamera(35, width / height, 0.1, 1000);
-            camera.position.set(0, 0.4, 5.5);
-            camera.lookAt(0, 0, 0);
-
-            const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
-            renderer.setSize(width, height);
-            renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
-            renderer.toneMapping = THREE.ACESFilmicToneMapping;
-            renderer.toneMappingExposure = 1.4;
-            renderer.shadowMap.enabled = false;
-            container.appendChild(renderer.domElement);
-
-            // Свет
-            const ambient = new THREE.AmbientLight(0x4466aa, 0.3);
-            scene.add(ambient);
-            const main = new THREE.DirectionalLight(0xaaccff, 1.4);
-            main.position.set(2, 4, 5);
-            scene.add(main);
-            const fill = new THREE.DirectionalLight(0x4488cc, 0.6);
-            fill.position.set(-3, 1, -4);
-            scene.add(fill);
-            const rim = new THREE.DirectionalLight(0x88ccff, 0.9);
-            rim.position.set(-1, 0.5, -4);
-            scene.add(rim);
-            const bottom = new THREE.DirectionalLight(0x2266aa, 0.3);
-            bottom.position.set(0, -2, 0);
-            scene.add(bottom);
-
-            // Группа
-            const group = new THREE.Group();
-            scene.add(group);
-
-            // Материалы
-            const glassMat = new THREE.MeshPhysicalMaterial({
-                color: 0x88bbff,
-                metalness: 0.0,
-                roughness: 0.04,
-                transparent: true,
-                opacity: 0.20,
-                clearcoat: 0.8,
-                clearcoatRoughness: 0.15,
-                envMapIntensity: 1.2,
-                premultipliedAlpha: true,
-                side: THREE.DoubleSide,
-            });
-            const glassHighlightMat = new THREE.MeshPhysicalMaterial({
-                color: 0xffffff,
-                metalness: 0.0,
-                roughness: 0.0,
-                transparent: true,
-                opacity: 0.06,
-                side: THREE.DoubleSide,
-            });
-            const glowMat = new THREE.MeshBasicMaterial({
-                color: 0x4488ff,
-                transparent: true,
-                opacity: 0.03,
-                side: THREE.DoubleSide,
-            });
-            const goldMat = new THREE.MeshPhysicalMaterial({
-                color: 0x88ccff,
-                metalness: 0.4,
-                roughness: 0.08,
-                transparent: true,
-                opacity: 0.12,
-                emissive: 0x4488ff,
-                emissiveIntensity: 0.06,
-            });
-
-            // Чаша
-            const bowlGeo = new THREE.LatheGeometry([
-                new THREE.Vector2(0.42, 0.0),
-                new THREE.Vector2(0.52, 0.05),
-                new THREE.Vector2(0.62, 0.14),
-                new THREE.Vector2(0.70, 0.28),
-                new THREE.Vector2(0.74, 0.44),
-                new THREE.Vector2(0.72, 0.56),
-                new THREE.Vector2(0.64, 0.62),
-                new THREE.Vector2(0.48, 0.64),
-                new THREE.Vector2(0.38, 0.60),
-            ], 48);
-            const bowl = new THREE.Mesh(bowlGeo, glassMat);
-            bowl.position.y = 0.28;
-            group.add(bowl);
-
-            // Внутренняя полость
-            const innerGeo = new THREE.LatheGeometry([
-                new THREE.Vector2(0.35, 0.04),
-                new THREE.Vector2(0.44, 0.08),
-                new THREE.Vector2(0.52, 0.18),
-                new THREE.Vector2(0.56, 0.30),
-                new THREE.Vector2(0.54, 0.42),
-                new THREE.Vector2(0.46, 0.48),
-                new THREE.Vector2(0.35, 0.50),
-            ], 48);
-            const inner = new THREE.Mesh(innerGeo, glowMat);
-            inner.position.y = 0.28;
-            group.add(inner);
-
-            // Обод
-            const rimGeo = new THREE.TorusGeometry(0.60, 0.025, 16, 48);
-            const rimMesh = new THREE.Mesh(rimGeo, goldMat);
-            rimMesh.position.y = 0.92;
-            rimMesh.rotation.x = Math.PI / 2;
-            group.add(rimMesh);
-
-            // Ножка
-            const stemGeo = new THREE.CylinderGeometry(0.06, 0.10, 0.40, 16);
-            const stem = new THREE.Mesh(stemGeo, glassMat);
-            stem.position.y = 0.06;
-            group.add(stem);
-
-            // Основание
-            const baseGeo = new THREE.CylinderGeometry(0.30, 0.42, 0.05, 32);
-            const base = new THREE.Mesh(baseGeo, glassMat);
-            base.position.y = -0.14;
-            group.add(base);
-
-            // Блик-полоса
-            const band1 = new THREE.Mesh(new THREE.TorusGeometry(0.52, 0.012, 8, 48), glassHighlightMat);
-            band1.position.y = 0.58;
-            band1.rotation.x = Math.PI / 2;
-            group.add(band1);
-            const band2 = new THREE.Mesh(new THREE.TorusGeometry(0.38, 0.012, 8, 48), glassHighlightMat);
-            band2.position.y = 0.38;
-            band2.rotation.x = Math.PI / 2;
-            group.add(band2);
-
-            // Звезда
-            const starGroup = new THREE.Group();
-            starGroup.position.y = 0.52;
-            group.add(starGroup);
-            for (let i = 0; i < 10; i++) {
-                const angle = (i / 10) * Math.PI * 2;
-                const spike = new THREE.Mesh(
-                    new THREE.SphereGeometry(0.022, 6, 6),
-                    new THREE.MeshBasicMaterial({ color: 0x88ccff, transparent: true, opacity: 0.3 + Math.random() * 0.2 })
-                );
-                spike.position.set(Math.cos(angle) * 0.14, Math.sin(angle) * 0.14, 0);
-                starGroup.add(spike);
-            }
-            const coreStar = new THREE.Mesh(
-                new THREE.SphereGeometry(0.035, 12, 12),
-                new THREE.MeshBasicMaterial({ color: 0xaaddff, transparent: true, opacity: 0.6 })
-            );
-            starGroup.add(coreStar);
-
-            // Кольца
-            const ring1 = new THREE.Mesh(new THREE.TorusGeometry(0.85, 0.004, 8, 64),
-                new THREE.MeshBasicMaterial({ color: 0x4488ff, transparent: true, opacity: 0.06, side: THREE.DoubleSide })
-            );
-            ring1.rotation.x = Math.PI / 2.5;
-            ring1.position.y = 0.28;
-            group.add(ring1);
-            const ring2 = new THREE.Mesh(new THREE.TorusGeometry(0.95, 0.003, 8, 64),
-                new THREE.MeshBasicMaterial({ color: 0x88ccff, transparent: true, opacity: 0.04, side: THREE.DoubleSide })
-            );
-            ring2.rotation.x = Math.PI / 1.8;
-            ring2.rotation.z = 0.7;
-            ring2.position.y = 0.28;
-            group.add(ring2);
-            const ring3 = new THREE.Mesh(new THREE.TorusGeometry(0.75, 0.002, 8, 64),
-                new THREE.MeshBasicMaterial({ color: 0xaaddff, transparent: true, opacity: 0.03, side: THREE.DoubleSide })
-            );
-            ring3.rotation.x = Math.PI / 3.5;
-            ring3.rotation.y = 0.5;
-            ring3.position.y = 0.28;
-            group.add(ring3);
-
-            // Частицы
-            const pc = 400;
-            const pGeo = new THREE.BufferGeometry();
-            const pPos = new Float32Array(pc * 3);
-            const pColors = new Float32Array(pc * 3);
-            const pSizes = new Float32Array(pc);
-            for (let i = 0; i < pc; i++) {
-                const theta = Math.random() * Math.PI * 2;
-                const phi = Math.random() * Math.PI;
-                const r = 0.6 + Math.random() * 1.8;
-                pPos[i * 3] = Math.sin(phi) * Math.cos(theta) * r;
-                pPos[i * 3 + 1] = Math.sin(phi) * Math.sin(theta) * r * 0.5 + 0.3;
-                pPos[i * 3 + 2] = Math.cos(phi) * r;
-                const c = 0.4 + Math.random() * 0.6;
-                pColors[i * 3] = 0.5 + Math.random() * 0.5;
-                pColors[i * 3 + 1] = 0.5 + Math.random() * 0.5;
-                pColors[i * 3 + 2] = 0.8 + Math.random() * 0.2;
-                pSizes[i] = 0.004 + Math.random() * 0.018;
-            }
-            pGeo.setAttribute('position', new THREE.BufferAttribute(pPos, 3));
-            pGeo.setAttribute('color', new THREE.BufferAttribute(pColors, 3));
-            pGeo.setAttribute('size', new THREE.BufferAttribute(pSizes, 1));
-            const pMat = new THREE.PointsMaterial({
-                size: 0.018,
-                transparent: true,
-                opacity: 0.5,
-                vertexColors: true,
-                blending: THREE.AdditiveBlending,
-                depthWrite: false,
-                sizeAttenuation: true,
-            });
-            const particles = new THREE.Points(pGeo, pMat);
-            group.add(particles);
-
-            // Мышь
-            let targetRotY = 0,
-                targetRotX = 0;
-            document.addEventListener('mousemove', (e) => {
-                const mx = (e.clientX / window.innerWidth - 0.5) * 2;
-                const my = (e.clientY / window.innerHeight - 0.5) * 2;
-                targetRotY = mx * 0.35;
-                targetRotX = my * 0.15;
-            });
-
-            // Клик по кубку
-            let clickBoost = 0;
-            document.getElementById('three-container').addEventListener('click', () => {
-                clickBoost = 1.2;
-                const flash = document.createElement('div');
-                flash.style.cssText = `
-                    position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-                    background: radial-gradient(circle at center, rgba(80,170,255,0.06), transparent 60%);
-                    pointer-events: none; z-index: 0;
-                    animation: flashOut 0.8s ease-out forwards;
-                `;
-                document.body.prepend(flash);
-                setTimeout(() => flash.remove(), 800);
-            });
-
-            // Анимация
-            let time = 0;
-
-            function animate() {
-                requestAnimationFrame(animate);
-                time += 0.006;
-
-                group.rotation.y += (targetRotY - group.rotation.y) * 0.04;
-                group.rotation.x += (targetRotX - group.rotation.x) * 0.04;
-                group.rotation.y += 0.0015 + clickBoost * 0.005;
-                if (clickBoost > 0) { clickBoost *= 0.97; if (clickBoost < 0.01) clickBoost = 0; }
-                group.position.y = Math.sin(time * 0.5) * 0.04;
-
-                starGroup.rotation.z = time * 1.2;
-                starGroup.rotation.x = Math.sin(time * 0.6) * 0.12;
-                coreStar.material.opacity = 0.4 + Math.sin(time * 1.8) * 0.25;
-                coreStar.scale.setScalar(1 + Math.sin(time * 1.4) * 0.06);
-                ring1.rotation.z = time * 0.2;
-                ring2.rotation.y = time * 0.15;
-                ring3.rotation.x = time * 0.12;
-                particles.rotation.y = time * 0.04;
-                particles.rotation.x = Math.sin(time * 0.025) * 0.025;
-                band1.material.opacity = 0.05 + Math.sin(time * 1.3) * 0.035;
-                band2.material.opacity = 0.035 + Math.sin(time * 1.6 + 1) * 0.025;
-                glassMat.opacity = 0.18 + Math.sin(time * 0.7) * 0.04;
-
-                renderer.render(scene, camera);
-            }
-            animate();
-
-            window.addEventListener('resize', () => {
-                const w = window.innerWidth;
-                const h = window.innerHeight;
-                camera.aspect = w / h;
-                camera.updateProjectionMatrix();
-                renderer.setSize(w, h);
-            });
-        })();
-
-        // ===== КЛИК ПО КАРТОЧКАМ =====
-        function handleCardClick(element) {
-            const rect = element.getBoundingClientRect();
-            const size = Math.max(rect.width, rect.height) * 0.5;
-            const cx = event?.clientX || rect.left + rect.width / 2;
-            const cy = event?.clientY || rect.top + rect.height / 2;
-            const x = cx - rect.left - size / 2;
-            const y = cy - rect.top - size / 2;
-
-            const ripple = document.createElement('div');
-            ripple.className = 'ripple-effect';
-            ripple.style.width = size + 'px';
-            ripple.style.height = size + 'px';
-            ripple.style.left = x + 'px';
-            ripple.style.top = y + 'px';
-            element.appendChild(ripple);
-            setTimeout(() => ripple.remove(), 700);
-
-            element.style.transition = 'transform 0.08s ease';
-            element.style.transform = 'scale(0.97)';
-            setTimeout(() => { element.style.transform = ''; }, 150);
+        // Секретное слово с прыгающими буквами
+        const secretWord = document.getElementById('secretWord');
+        const secretText = secretWord.textContent;
+        secretWord.innerHTML = '';
+        for (let char of secretText) {
+            const span = document.createElement('span');
+            span.classList.add('secret-letter');
+            span.textContent = char;
+            secretWord.appendChild(span);
         }
     </script>
-
 </body>
 </html>
