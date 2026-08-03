@@ -3,39 +3,124 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Диагностика</title>
+    <title>Полная диагностика</title>
     <style>
-        body { font-family: -apple-system, sans-serif; padding: 20px; }
-        button { padding: 12px 20px; margin: 8px; font-size: 16px; display: block; width: 100%; }
-        .result { background: #f0f0f0; padding: 10px; margin: 10px 0; border-radius: 8px; }
+        body { 
+            font-family: -apple-system, sans-serif; 
+            padding: 20px; 
+            background: #fff;
+            transition: background 0.3s, color 0.3s;
+        }
+        body.dark { background: #1a1a1a; color: #fff; }
+        body.dark .result { background: #333; color: #fff; }
+        button { 
+            padding: 14px 20px; 
+            margin: 8px 0; 
+            font-size: 16px; 
+            display: block; 
+            width: 100%; 
+            border-radius: 10px;
+            border: none;
+            cursor: pointer;
+        }
+        .btn-alert { background: #FF5722; color: #fff; }
+        .btn-dom { background: #2196F3; color: #fff; }
+        .btn-storage { background: #4CAF50; color: #fff; }
+        .btn-clipboard { background: #9C27B0; color: #fff; }
+        .btn-theme { background: #FF9800; color: #fff; }
+        .btn-download { background: #00BCD4; color: #fff; }
+        .btn-copy-text { background: #795548; color: #fff; }
+        .result { 
+            background: #f0f0f0; 
+            padding: 12px; 
+            margin: 6px 0 16px 0; 
+            border-radius: 8px; 
+            font-size: 14px;
+        }
+        .copyable {
+            padding: 10px;
+            background: #e8f5e9;
+            border-radius: 8px;
+            cursor: pointer;
+            margin: 8px 0;
+        }
+        .toast {
+            position: fixed;
+            bottom: 30px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: #333;
+            color: #fff;
+            padding: 12px 24px;
+            border-radius: 25px;
+            opacity: 0;
+            transition: opacity 0.3s;
+            z-index: 999;
+            font-size: 14px;
+        }
+        .toast.show { opacity: 1; }
+        hr { margin: 20px 0; border: none; border-top: 1px solid #ddd; }
     </style>
 </head>
 <body>
 
-    <h2>🔍 Диагностика</h2>
+    <h2>🔍 Полная диагностика</h2>
 
-    <button onclick="testAlert()">1. Простой alert</button>
+    <!-- Базовые тесты -->
+    <h3>📌 Базовые функции</h3>
+    
+    <button class="btn-alert" onclick="testAlert()">1. Простой alert</button>
     <div class="result" id="result1">Нажми кнопку 1</div>
 
-    <button onclick="testDOM()">2. Изменить этот текст</button>
+    <button class="btn-dom" onclick="testDOM()">2. Изменить текст (DOM)</button>
     <div class="result" id="result2">Нажми кнопку 2</div>
 
-    <button onclick="testLocalStorage()">3. Записать в localStorage</button>
+    <button class="btn-storage" onclick="testLocalStorage()">3. Записать в localStorage</button>
     <div class="result" id="result3">Нажми кнопку 3</div>
 
-    <button onclick="testClipboard()">4. Скопировать "Привет"</button>
+    <hr>
+
+    <!-- Копирование -->
+    <h3>📋 Копирование текста</h3>
+    
+    <button class="btn-clipboard" onclick="testClipboard()">4. Скопировать "Привет" (кнопка)</button>
     <div class="result" id="result4">Нажми кнопку 4</div>
 
+    <p class="copyable" data-copy="Тестовый текст для копирования">👆 Нажми на этот текст — должно скопироваться</p>
+    <div class="result" id="result5">Нажми на текст выше</div>
+
+    <hr>
+
+    <!-- Тема -->
+    <h3>🌓 Переключение темы</h3>
+    
+    <button class="btn-theme" onclick="testTheme()">5. Переключить тему</button>
+    <div class="result" id="result6">Тема: светлая</div>
+
+    <hr>
+
+    <!-- Скачивание -->
+    <h3>📥 Скачивание файла</h3>
+    
+    <button class="btn-download" onclick="testDownload()">6. Скачать test.txt</button>
+    <div class="result" id="result7">Нажми кнопку 6</div>
+
+    <!-- Toast -->
+    <div class="toast" id="toast">✅ Скопировано!</div>
+
     <script>
+        // ========== 1. ALERT ==========
         function testAlert() {
             alert('JavaScript работает!');
             document.getElementById('result1').innerHTML = '✅ Alert сработал';
         }
 
+        // ========== 2. DOM ==========
         function testDOM() {
             document.getElementById('result2').innerHTML = '✅ DOM изменён в ' + new Date().toLocaleTimeString();
         }
 
+        // ========== 3. LOCALSTORAGE ==========
         function testLocalStorage() {
             try {
                 localStorage.setItem('test', 'работает');
@@ -46,31 +131,133 @@
             }
         }
 
+        // ========== 4. КОПИРОВАНИЕ (кнопка) ==========
         function testClipboard() {
-            // Способ 1
-            if (navigator.clipboard) {
-                navigator.clipboard.writeText('Привет').then(function() {
-                    document.getElementById('result4').innerHTML = '✅ Скопировано через clipboard API';
-                }).catch(function() {
-                    fallback();
+            var text = 'Привет';
+            var result4 = document.getElementById('result4');
+            
+            if (navigator.clipboard && navigator.clipboard.writeText) {
+                navigator.clipboard.writeText(text).then(function() {
+                    result4.innerHTML = '✅ Скопировано через Clipboard API';
+                }).catch(function(err) {
+                    result4.innerHTML = '❌ Clipboard API ошибка: ' + err.message + '. Пробую fallback...';
+                    fallbackCopy(text, result4);
                 });
             } else {
-                fallback();
+                result4.innerHTML = '⚠️ Clipboard API нет. Пробую execCommand...';
+                fallbackCopy(text, result4);
             }
+        }
 
-            function fallback() {
+        function fallbackCopy(text, resultEl) {
+            var ta = document.createElement('textarea');
+            ta.value = text;
+            ta.style.position = 'fixed';
+            ta.style.left = '-9999px';
+            ta.style.top = (window.pageYOffset || document.documentElement.scrollTop) + 'px';
+            document.body.appendChild(ta);
+            ta.focus();
+            ta.select();
+            try {
+                var success = document.execCommand('copy');
+                if (success) {
+                    resultEl.innerHTML = '✅ Скопировано через execCommand';
+                } else {
+                    resultEl.innerHTML = '❌ execCommand вернул false';
+                }
+            } catch(e) {
+                resultEl.innerHTML = '❌ execCommand ошибка: ' + e.message;
+            }
+            document.body.removeChild(ta);
+        }
+
+        // ========== 5. КОПИРОВАНИЕ (клик по тексту) ==========
+        document.addEventListener('click', function(e) {
+            var el = e.target.closest('.copyable');
+            if (!el) return;
+            var text = el.getAttribute('data-copy');
+            var result5 = document.getElementById('result5');
+            
+            if (navigator.clipboard && navigator.clipboard.writeText) {
+                navigator.clipboard.writeText(text).then(function() {
+                    result5.innerHTML = '✅ Скопировано: "' + text + '"';
+                    showToast();
+                }).catch(function() {
+                    result5.innerHTML = '❌ Ошибка Clipboard API';
+                });
+            } else {
                 var ta = document.createElement('textarea');
-                ta.value = 'Привет';
+                ta.value = text;
                 document.body.appendChild(ta);
                 ta.select();
                 try {
                     document.execCommand('copy');
-                    document.getElementById('result4').innerHTML = '✅ Скопировано через execCommand';
+                    result5.innerHTML = '✅ Скопировано: "' + text + '"';
+                    showToast();
                 } catch(e) {
-                    document.getElementById('result4').innerHTML = '❌ Копирование не работает: ' + e.message;
+                    result5.innerHTML = '❌ Не удалось скопировать';
                 }
                 document.body.removeChild(ta);
             }
+        });
+
+        function showToast() {
+            var toast = document.getElementById('toast');
+            toast.classList.add('show');
+            setTimeout(function() { toast.classList.remove('show'); }, 2000);
+        }
+
+        // ========== 6. ТЕМА ==========
+        function testTheme() {
+            var body = document.body;
+            var result6 = document.getElementById('result6');
+            
+            if (body.classList.contains('dark')) {
+                body.classList.remove('dark');
+                result6.innerHTML = 'Тема: светлая (сохранено)';
+                try { localStorage.setItem('test-theme', 'light'); } catch(e) {}
+            } else {
+                body.classList.add('dark');
+                result6.innerHTML = 'Тема: тёмная (сохранено)';
+                try { localStorage.setItem('test-theme', 'dark'); } catch(e) {}
+            }
+        }
+
+        // Восстановление темы
+        (function() {
+            try {
+                if (localStorage.getItem('test-theme') === 'dark') {
+                    document.body.classList.add('dark');
+                    document.getElementById('result6').innerHTML = 'Тема: тёмная (из памяти)';
+                }
+            } catch(e) {}
+        })();
+
+        // ========== 7. СКАЧИВАНИЕ ==========
+        function testDownload() {
+            var result7 = document.getElementById('result7');
+            var content = 'Тестовый файл\nСкачан: ' + new Date().toLocaleString();
+            var blob = new Blob([content], { type: 'text/plain;charset=utf-8' });
+            var url = URL.createObjectURL(blob);
+            
+            // Способ 1: ссылка
+            var a = document.createElement('a');
+            a.href = url;
+            a.download = 'test.txt';
+            document.body.appendChild(a);
+            
+            try {
+                a.click();
+                result7.innerHTML = '✅ Скачивание запущено (a.click)';
+            } catch(e) {
+                result7.innerHTML = '❌ a.click не сработал: ' + e.message + '. Пробую window.open...';
+                window.open(url, '_blank');
+            }
+            
+            setTimeout(function() {
+                document.body.removeChild(a);
+                URL.revokeObjectURL(url);
+            }, 1000);
         }
     </script>
 
