@@ -1047,21 +1047,35 @@ body::before{
 .update-line-text{color:var(--text-soft);flex:1 1 auto;min-width:0}
 .update-line-text .update-highlight{color:var(--text);font-weight:700}
 
+/* ================= ВЫДЕЛЕНИЕ ================= */
 .update-highlight{
-  color:var(--orange-light);font-weight:700;
-  background:rgba(255,140,66,.08);
-  padding:.05rem .35rem;border-radius:6px;
-  box-decoration-break:clone;-webkit-box-decoration-break:clone;
+  color:var(--text);
+  font-weight:700;
+  background:none;
+  padding:0;
+  border-bottom:2px solid var(--orange);
+  padding-bottom:1px;
+  box-decoration-break:clone;
+  -webkit-box-decoration-break:clone;
+  transition:border-color var(--t-fast);
 }
-[data-theme="light"] .update-highlight{color:#b8480f;background:rgba(255,107,26,.1)}
+.update-card.added .update-highlight{border-bottom-color:#5aba5a}
+.update-card.fixed .update-highlight{border-bottom-color:#6db8ff}
+[data-theme="light"] .update-highlight{
+  color:#1a0e08;
+  border-bottom-color:#ff6b1a;
+}
+
 .update-price{
-  display:inline-flex;align-items:center;gap:.3rem;
-  padding:.1rem .55rem;border-radius:8px;
-  background:rgba(255,200,87,.15);
-  border:1px solid rgba(255,200,87,.35);
-  color:var(--amber);font-weight:700;font-size:.8rem;
+  display:inline;
+  font-weight:800;
+  color:var(--amber);
   font-variant-numeric:tabular-nums;
+  white-space:nowrap;
 }
+.update-price::before{content:'«';opacity:.55;margin-right:.05rem}
+.update-price::after{content:'»';opacity:.55;margin-left:.05rem}
+[data-theme="light"] .update-price{color:#b57a00}
 
 .update-accordion{
   margin-top:1rem;
@@ -1325,17 +1339,41 @@ body::before{
   .update-card-tape{width:44px;height:12px;left:14px}
   .cmd-chip{font-size:.68rem;padding:.25rem .55rem}
   .update-list li.update-line{
-    flex-direction:column;align-items:flex-start;gap:.15rem;
-    padding:.65rem .8rem;
-    background:rgba(255,140,66,.05);
-    border:1px solid var(--border);
-    border-radius:12px;margin-bottom:.45rem;
+    display:block;
+    flex-direction:unset;
+    align-items:unset;
+    gap:0;
+    padding:.4rem 0 .5rem .9rem;
+    background:none;
+    border:0;
+    border-left:2px solid var(--border);
+    border-radius:0;
+    margin-bottom:.1rem;
+    position:relative;
+    font-size:.86rem;
+    line-height:1.55;
   }
   .update-list li.update-line::before{display:none}
-  .update-line-label{white-space:normal;font-size:.86rem;color:var(--orange-light);letter-spacing:.01em}
-  [data-theme="light"] .update-line-label{color:#b8480f}
+  .update-line-label{
+    display:block;
+    white-space:normal;
+    font-family:'Unbounded',sans-serif;
+    font-size:.7rem;
+    font-weight:800;
+    letter-spacing:.08em;
+    text-transform:uppercase;
+    color:var(--orange);
+    margin-bottom:.15rem;
+    line-height:1.2;
+  }
+  [data-theme="light"] .update-line-label{color:#c65513}
   .update-line-sep{display:none}
-  .update-line-text{font-size:.82rem;color:var(--text-soft);line-height:1.5}
+  .update-line-text{
+    display:block;
+    font-size:.85rem;
+    color:var(--text-soft);
+    line-height:1.55;
+  }
   .hw-web-tl,.hw-web-tr{width:130px;height:130px}
   .hw-spider{width:34px;left:4%}
   .hw-spider-body{width:34px;height:44px}
@@ -2311,7 +2349,6 @@ function renderRules(){
 }
 
 /* ================= UPDATES DATA ================= */
-/* Порядок: регионы → работы → tps/tph → топ по репутации → чёрный рынок → пвп → викторина → мистический сундук → питомцы */
 const UPDATES_ADDED = [
   { icon:'region', title:'Система регионов — полностью переработана',
     items:[
